@@ -1,0 +1,17 @@
+caogao/
+ckpt/
+output/
+result/
+phote/
+save/
+
+
+__pycache__
+*.pyc
+archive
+.idea
+.DS_Store
+list/annotations
+hmgics
+
+

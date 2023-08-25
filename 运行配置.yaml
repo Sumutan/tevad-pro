@@ -1,0 +1,119 @@
+train:
+  ucf:
+    ucf default:
+      --dataset ucf --feature-group both --fusion concat --aggregate_text --extra_loss --use_dic_gt --exp-name ucf-i3d-official
+    ucf-mae-train:
+      --dataset ucf --feature-group both --fusion concat --feature-size 768 --alignment_method cut  --use_dic_gt --feat-extractor videoMAE --aggregate_text --extra_loss --exp-name ucf-mae-train
+    ucf-videoMAE-train-k400+svl:
+      --dataset ucf --feature-group both --fusion concat --feature-size 768 --alignment_method cut  --use_dic_gt --feat-extractor videoMAE --aggregate_text --extra_loss --rgb-list list/ucf-videoMAE-train-k400+svl.list --test-rgb-list list/ucf-videoMAE-test-k400+svl.list
+    ucf-videoMae-finetune-400_frame_with_depth_add_loss_on_surveillance_20w-100_469:
+      --dataset ucf --feature-group both --fusion concat --feature-size 768 --use_dic_gt 
+      --feat-extractor videoMAE --aggregate_text --extra_loss 
+      --rgb-list list/ucf-videoMae-finetune-400_frame_with_depth_add_loss_on_surveillance_20w-100_469.list
+      --test-rgb-list list/ucf-videoMae-test-finetune-400_frame_with_depth_add_loss_on_surveillance_20w-100_469.list
+    ucf-videoMae-finetune-400_frame_with_depth_add_loss_on_surveillance_20w-100_469_TEVAD_only_vis:
+      --dataset ucf --feature-group vis --fusion concat --feature-size 768 --use_dic_gt --feat-extractor videoMAE --aggregate_text --extra_loss --rgb-list list/ucf-videoMae-finetune-400_frame_with_depth_add_loss_on_surveillance_20w-100_469.list --test-rgb-list list/ucf-videoMae-test-finetune-400_frame_with_depth_add_loss_on_surveillance_20w-100_469.list --exp-name ucf-videoMae-finetune-400_frame_with_depth_add_loss_on_surveillance_20w-100_469_TEVAD_only_vis
+    ucf-videoMae-finetune_frame_with_depth_401l-100_734:
+      --dataset ucf --feature-group both --fusion concat --feature-size 768 --use_dic_gt 
+      --feat-extractor videoMAE --aggregate_text --extra_loss 
+      --rgb-list list/ucf-videoMae-finetune_frame_with_depth_401l-100_734
+      --test-rgb-list list/ucf-videoMae-test-finetune_frame_with_depth_401l-100_734
+    ucf-videoMae-finetune_random_only_surveillance-100_734:
+      --dataset ucf --feature-group both --fusion concat --feature-size 768 --use_dic_gt 
+      --feat-extractor videoMAE --aggregate_text --extra_loss 
+      --rgb-list list/ucf-videoMae-finetune_random_only_surveillance-100_734
+      --test-rgb-list list/ucf-videoMae-test-finetune_random_only_surveillance-100_734
+    ucf-videoMae-7-19_depth-800_264_encoder:
+      --dataset ucf --feature-group both --fusion concat --feature-size 768 --use_dic_gt
+      --feat-extractor videoMAE --aggregate_text --extra_loss
+      --rgb-list list/ucf-videoMae-7-19_depth-800_264_encoder
+      --test-rgb-list list/ucf-videoMae-test-7-19_depth-800_264_encoder
+      --exp-name ucf-videoMae-7-19_depth-800_264_encoder
+    ucf-videoMae-8-12_finetune-8-10_8-8_k400_with_surveillance-100_469:
+      --dataset ucf --feature-group both --fusion concat --feature-size 768 --use_dic_gt
+      --feat-extractor videoMAE --aggregate_text --extra_loss
+      --rgb-list list/ucf-videoMae-8-12_finetune-8-10_8-8_k400_with_surveillance-100_469
+      --test-rgb-list list/ucf-videoMae-test-8-12_finetune-8-10_8-8_k400_with_surveillance-100_469
+      --exp-name ucf-videoMae-8-12_finetune-8-10_8-8_k400_with_surveillance-100_469
+    ucf-videoMae-pretrain_frame_with_depth_add_loss-on_surveillance_20w:
+      --dataset ucf --feature-group both --fusion concat --feature-size 768 --use_dic_gt
+      --feat-extractor videoMAE --aggregate_text --extra_loss
+      --rgb-list list/ucf-videoMae-pretrain_frame_with_depth_add_loss-on_surveillance_20w.list
+      --test-rgb-list list/ucf-videoMae-test-pretrain_frame_with_depth_add_loss-on_surveillance_20w.list
+      --exp-name ucf-videoMae-pretrain_frame_with_depth_add_loss-on_surveillance_20w
+    ucf-videoMae-test-8-10_8-8_pretrain_surveillance_20w_400-800e:
+      --dataset ucf --feature-group both --fusion concat --feature-size 768 --use_dic_gt
+      --feat-extractor videoMAE --aggregate_text --extra_loss
+      --rgb-list list/ucf-videoMae-8-10_8-8_pretrain_surveillance_20w_400-800e.list
+      --test-rgb-list list/ucf-videoMae-test-8-10_8-8_pretrain_surveillance_20w_400-800e.list
+      --exp-name ucf-videoMae-test-8-10_8-8_pretrain_surveillance_20w_400-800e
+    ucf-videoMae-test-8-17_8-15_finetune_random_on_surveillance_20w_k400:
+      --dataset ucf --feature-group both --fusion concat --feature-size 768 --use_dic_gt
+      --feat-extractor videoMAE --aggregate_text --extra_loss
+      --rgb-list list/ucf-videoMae-8-17_8-15_finetune_random_on_surveillance_20w_k400.list
+      --test-rgb-list list/ucf-videoMae-test-8-17_8-15_finetune_random_on_surveillance_20w_k400.list
+      --exp-name ucf-videoMae-test-8-17_8-15_finetune_random_on_surveillance_20w_k400
+    ucf-clip:
+      --dataset ucf --feature-group both --fusion concat --aggregate_text --extra_loss  --use_dic_gt 
+      --feat-extractor clip --feature-size 512  
+      --rgb-list ./list/ucf-clip.list 
+      --test-rgb-list ./list/ucf-clip-test.list 
+      --exp-name ucf-clip
+    ucf-clip-MixBeforeMTN-concat:  #model->model_csh_MixBeforeMTN
+      --dataset ucf --feature-group both --fusion concat --aggregate_text --extra_loss --use_dic_gt --feat-extractor clip --feature-size 512 --rgb-list ./list/ucf-clip.list --test-rgb-list ./list/ucf-clip-test.list --exp-name ucf-clip-concat_before_MTN
+
+  ST:
+    ST i3d:
+      python main.py --dataset shanghai --feature-group both --fusion add --aggregate_text --extra_loss --use_dic_gt 
+      --exp-name shanghai-i3d-official
+    ST clip:
+      python main.py --dataset shanghai --feature-group both --fusion add --aggregate_text --extra_loss --feat-extractor clip --feature-size 512
+    ST i3d-clip:
+      --dataset shanghai --feature-group both --fusion add --aggregate_text --extra_loss --use_dic_gt --emb_dim 512 
+      --caption-extractor clip
+      --exp-name shanghai-i3d-clip
+    ST MAE-suvpretrain_721:
+      --dataset shanghai --feature-group both --fusion add --aggregate_text --extra_loss --use_dic_gt 
+      --feat-extractor videoMAE --feature-size 768 
+      --rgb-list ./list/shanghai-videoMAE-train-10crop-suvpretrain_nok400ft_721.list
+      --test-rgb-list ./list/shanghai-videoMAE-test-10crop-suvpretrain_nok400ft_721.list
+      --exp-name shanghai-videoMAE-suvpretrain_721
+    ST MAE-suvpretrain_k400ft_719:
+      --dataset shanghai --feature-group both --fusion add --aggregate_text --extra_loss --use_dic_gt 
+      --feat-extractor videoMAE --feature-size 768 
+      --rgb-list ./list/shanghai-videoMAE-train-10crop-suvpretrain_k400ft_719.list 
+      --test-rgb-list ./list/shanghai-videoMAE-test-10crop-suvpretrain_k400ft_719.list 
+      --exp-name shanghai-videoMAE-suvpretrain_k400ft_719
+    ST MAE-suvpretrain_k400ft_719_sampling4:
+      --dataset shanghai --feature-group both --fusion add --aggregate_text --extra_loss --use_dic_gt 
+      --feat-extractor videoMAE --feature-size 768 --sampling 4
+      --rgb-list ./list/shanghai-videoMAE-train-sampling4.list
+      --test-rgb-list ./list/shanghai-videoMAE-test-sampling4.list 
+      --exp-name shanghai-videoMAE-suvpretrain_k400ft_719_sampling4
+
+test:
+  shanghai dic_gt:
+    python main_test.py --dataset shanghai_v2 --use_dic_gt True --feature-group both --fusion add --pretrained-ckpt ./ckpt/my_best/shanghai_v2-both-text_agg-add-1-1-extra_loss-595-i3d-best.pkl --aggregate_text
+
+  shanghai clip 7.10:
+    --pretrained-ckpt /media/lizi/新加卷/sh/TEVAD-main/ckpt/shanghai-visclip/shanghai-both-text_agg-add-0.0001-extra_loss-610-4869-.pkl --dataset shanghai --feature-group both --fusion add --aggregate_text --extra_loss --feat-extractor clip --feature-size 512 --use_dic_gt
+
+  ucf mae test:
+    --dataset ucf --feat-extractor videoMAE --pretrained-ckpt ./ckpt/my_best/ucf-both-text_agg-concat-0.0001-extra_loss-620-4869-.pkl --feature-group both --fusion concat --aggregate_text --save_test_results
+
+toRun:
+  ucf-clip:
+    --dataset ucf --feature-group both --fusion concat --aggregate_text --extra_loss  --use_dic_gt
+    --feat-extractor clip --feature-size 512
+    --rgb-list ./list/ucf-clip.list
+    --test-rgb-list ./list/ucf-clip-test.list
+    --exp-name ucf-clip
+
+  ucf-clip-only-vis:
+    --dataset ucf --feature-group vis --fusion concat --aggregate_text --extra_loss  --use_dic_gt
+    --feat-extractor clip --feature-size 512
+    --rgb-list ./list/ucf-clip.list
+    --test-rgb-list ./list/ucf-clip-test.list
+    --exp-name ucf-clip-only-vis
+
+
