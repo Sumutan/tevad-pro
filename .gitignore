@@ -1,9 +1,14 @@
 caogao/
 ckpt/
 output/
-result/
+results/
 phote/
 save/
+
+tools/buildDataList_ST/news
+/tools/buildDataList_ucf/newlist/
+/tools/draw_abnScore/selected_video/
+/tools/draw_abnScore/selectived_videos/
 
 
 __pycache__
@@ -13,5 +18,4 @@ archive
 .DS_Store
 list/annotations
 hmgics
-
 

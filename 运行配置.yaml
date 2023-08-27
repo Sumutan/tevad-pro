@@ -4,55 +4,71 @@ train:
       --dataset ucf --feature-group both --fusion concat --aggregate_text --extra_loss --use_dic_gt --exp-name ucf-i3d-official
     ucf-mae-train:
       --dataset ucf --feature-group both --fusion concat --feature-size 768 --alignment_method cut  --use_dic_gt --feat-extractor videoMAE --aggregate_text --extra_loss --exp-name ucf-mae-train
-    ucf-videoMAE-train-k400+svl:
-      --dataset ucf --feature-group both --fusion concat --feature-size 768 --alignment_method cut  --use_dic_gt --feat-extractor videoMAE --aggregate_text --extra_loss --rgb-list list/ucf-videoMAE-train-k400+svl.list --test-rgb-list list/ucf-videoMAE-test-k400+svl.list
-    ucf-videoMae-finetune-400_frame_with_depth_add_loss_on_surveillance_20w-100_469:
-      --dataset ucf --feature-group both --fusion concat --feature-size 768 --use_dic_gt 
-      --feat-extractor videoMAE --aggregate_text --extra_loss 
-      --rgb-list list/ucf-videoMae-finetune-400_frame_with_depth_add_loss_on_surveillance_20w-100_469.list
-      --test-rgb-list list/ucf-videoMae-test-finetune-400_frame_with_depth_add_loss_on_surveillance_20w-100_469.list
-    ucf-videoMae-finetune-400_frame_with_depth_add_loss_on_surveillance_20w-100_469_TEVAD_only_vis:
-      --dataset ucf --feature-group vis --fusion concat --feature-size 768 --use_dic_gt --feat-extractor videoMAE --aggregate_text --extra_loss --rgb-list list/ucf-videoMae-finetune-400_frame_with_depth_add_loss_on_surveillance_20w-100_469.list --test-rgb-list list/ucf-videoMae-test-finetune-400_frame_with_depth_add_loss_on_surveillance_20w-100_469.list --exp-name ucf-videoMae-finetune-400_frame_with_depth_add_loss_on_surveillance_20w-100_469_TEVAD_only_vis
-    ucf-videoMae-finetune_frame_with_depth_401l-100_734:
-      --dataset ucf --feature-group both --fusion concat --feature-size 768 --use_dic_gt 
-      --feat-extractor videoMAE --aggregate_text --extra_loss 
-      --rgb-list list/ucf-videoMae-finetune_frame_with_depth_401l-100_734
-      --test-rgb-list list/ucf-videoMae-test-finetune_frame_with_depth_401l-100_734
-    ucf-videoMae-finetune_random_only_surveillance-100_734:
-      --dataset ucf --feature-group both --fusion concat --feature-size 768 --use_dic_gt 
-      --feat-extractor videoMAE --aggregate_text --extra_loss 
-      --rgb-list list/ucf-videoMae-finetune_random_only_surveillance-100_734
-      --test-rgb-list list/ucf-videoMae-test-finetune_random_only_surveillance-100_734
-    ucf-videoMae-7-19_depth-800_264_encoder:
-      --dataset ucf --feature-group both --fusion concat --feature-size 768 --use_dic_gt
-      --feat-extractor videoMAE --aggregate_text --extra_loss
-      --rgb-list list/ucf-videoMae-7-19_depth-800_264_encoder
-      --test-rgb-list list/ucf-videoMae-test-7-19_depth-800_264_encoder
-      --exp-name ucf-videoMae-7-19_depth-800_264_encoder
-    ucf-videoMae-8-12_finetune-8-10_8-8_k400_with_surveillance-100_469:
-      --dataset ucf --feature-group both --fusion concat --feature-size 768 --use_dic_gt
-      --feat-extractor videoMAE --aggregate_text --extra_loss
-      --rgb-list list/ucf-videoMae-8-12_finetune-8-10_8-8_k400_with_surveillance-100_469
-      --test-rgb-list list/ucf-videoMae-test-8-12_finetune-8-10_8-8_k400_with_surveillance-100_469
-      --exp-name ucf-videoMae-8-12_finetune-8-10_8-8_k400_with_surveillance-100_469
-    ucf-videoMae-pretrain_frame_with_depth_add_loss-on_surveillance_20w:
-      --dataset ucf --feature-group both --fusion concat --feature-size 768 --use_dic_gt
-      --feat-extractor videoMAE --aggregate_text --extra_loss
-      --rgb-list list/ucf-videoMae-pretrain_frame_with_depth_add_loss-on_surveillance_20w.list
-      --test-rgb-list list/ucf-videoMae-test-pretrain_frame_with_depth_add_loss-on_surveillance_20w.list
-      --exp-name ucf-videoMae-pretrain_frame_with_depth_add_loss-on_surveillance_20w
-    ucf-videoMae-test-8-10_8-8_pretrain_surveillance_20w_400-800e:
-      --dataset ucf --feature-group both --fusion concat --feature-size 768 --use_dic_gt
-      --feat-extractor videoMAE --aggregate_text --extra_loss
-      --rgb-list list/ucf-videoMae-8-10_8-8_pretrain_surveillance_20w_400-800e.list
-      --test-rgb-list list/ucf-videoMae-test-8-10_8-8_pretrain_surveillance_20w_400-800e.list
-      --exp-name ucf-videoMae-test-8-10_8-8_pretrain_surveillance_20w_400-800e
-    ucf-videoMae-test-8-17_8-15_finetune_random_on_surveillance_20w_k400:
-      --dataset ucf --feature-group both --fusion concat --feature-size 768 --use_dic_gt
-      --feat-extractor videoMAE --aggregate_text --extra_loss
-      --rgb-list list/ucf-videoMae-8-17_8-15_finetune_random_on_surveillance_20w_k400.list
-      --test-rgb-list list/ucf-videoMae-test-8-17_8-15_finetune_random_on_surveillance_20w_k400.list
-      --exp-name ucf-videoMae-test-8-17_8-15_finetune_random_on_surveillance_20w_k400
+    videoMAE:
+      ucf-videoMAE-train-k400+svl:
+        --dataset ucf --feature-group both --fusion concat --feature-size 768 --alignment_method cut  --use_dic_gt --feat-extractor videoMAE --aggregate_text --extra_loss --rgb-list list/ucf-videoMAE-train-k400+svl.list --test-rgb-list list/ucf-videoMAE-test-k400+svl.list
+      ucf-videoMae-finetune-400_frame_with_depth_add_loss_on_surveillance_20w-100_469:
+        --dataset ucf --feature-group both --fusion concat --feature-size 768 --use_dic_gt 
+        --feat-extractor videoMAE --aggregate_text --extra_loss 
+        --rgb-list list/ucf-videoMae-finetune-400_frame_with_depth_add_loss_on_surveillance_20w-100_469.list
+        --test-rgb-list list/ucf-videoMae-test-finetune-400_frame_with_depth_add_loss_on_surveillance_20w-100_469.list
+      ucf-videoMae-finetune-400_frame_with_depth_add_loss_on_surveillance_20w-100_469_TEVAD_only_vis:
+        --dataset ucf --feature-group vis --fusion concat --feature-size 768 --use_dic_gt --feat-extractor videoMAE --aggregate_text --extra_loss --rgb-list list/ucf-videoMae-finetune-400_frame_with_depth_add_loss_on_surveillance_20w-100_469.list --test-rgb-list list/ucf-videoMae-test-finetune-400_frame_with_depth_add_loss_on_surveillance_20w-100_469.list --exp-name ucf-videoMae-finetune-400_frame_with_depth_add_loss_on_surveillance_20w-100_469_TEVAD_only_vis
+      ucf-videoMae-finetune_frame_with_depth_401l-100_734:
+        --dataset ucf --feature-group both --fusion concat --feature-size 768 --use_dic_gt 
+        --feat-extractor videoMAE --aggregate_text --extra_loss 
+        --rgb-list list/ucf-videoMae-finetune_frame_with_depth_401l-100_734
+        --test-rgb-list list/ucf-videoMae-test-finetune_frame_with_depth_401l-100_734
+      ucf-videoMae-finetune_random_only_surveillance-100_734:
+        --dataset ucf --feature-group both --fusion concat --feature-size 768 --use_dic_gt 
+        --feat-extractor videoMAE --aggregate_text --extra_loss 
+        --rgb-list list/ucf-videoMae-finetune_random_only_surveillance-100_734
+        --test-rgb-list list/ucf-videoMae-test-finetune_random_only_surveillance-100_734
+      ucf-videoMae-7-19_depth-800_264_encoder:
+        --dataset ucf --feature-group both --fusion concat --feature-size 768 --use_dic_gt
+        --feat-extractor videoMAE --aggregate_text --extra_loss
+        --rgb-list list/ucf-videoMae-7-19_depth-800_264_encoder
+        --test-rgb-list list/ucf-videoMae-test-7-19_depth-800_264_encoder
+        --exp-name ucf-videoMae-7-19_depth-800_264_encoder
+      ucf-videoMae-8-12_finetune-8-10_8-8_k400_with_surveillance-100_469:
+        --dataset ucf --feature-group both --fusion concat --feature-size 768 --use_dic_gt
+        --feat-extractor videoMAE --aggregate_text --extra_loss
+        --rgb-list list/ucf-videoMae-8-12_finetune-8-10_8-8_k400_with_surveillance-100_469
+        --test-rgb-list list/ucf-videoMae-test-8-12_finetune-8-10_8-8_k400_with_surveillance-100_469
+        --exp-name ucf-videoMae-8-12_finetune-8-10_8-8_k400_with_surveillance-100_469
+      ucf-videoMae-pretrain_frame_with_depth_add_loss-on_surveillance_20w:
+        --dataset ucf --feature-group both --fusion concat --feature-size 768 --use_dic_gt
+        --feat-extractor videoMAE --aggregate_text --extra_loss
+        --rgb-list list/ucf-videoMae-pretrain_frame_with_depth_add_loss-on_surveillance_20w.list
+        --test-rgb-list list/ucf-videoMae-test-pretrain_frame_with_depth_add_loss-on_surveillance_20w.list
+        --exp-name ucf-videoMae-pretrain_frame_with_depth_add_loss-on_surveillance_20w
+      ucf-videoMae-test-8-10_8-8_pretrain_surveillance_20w_400-800e:
+        --dataset ucf --feature-group both --fusion concat --feature-size 768 --use_dic_gt
+        --feat-extractor videoMAE --aggregate_text --extra_loss
+        --rgb-list list/ucf-videoMae-8-10_8-8_pretrain_surveillance_20w_400-800e.list
+        --test-rgb-list list/ucf-videoMae-test-8-10_8-8_pretrain_surveillance_20w_400-800e.list
+        --exp-name ucf-videoMae-test-8-10_8-8_pretrain_surveillance_20w_400-800e
+      ucf-videoMae-test-8-17_8-15_finetune_random_on_surveillance_20w_k400:
+        --dataset ucf --feature-group both --fusion concat --feature-size 768 --use_dic_gt
+        --feat-extractor videoMAE --aggregate_text --extra_loss
+        --rgb-list list/ucf-videoMae-8-17_8-15_finetune_random_on_surveillance_20w_k400.list
+        --test-rgb-list list/ucf-videoMae-test-8-17_8-15_finetune_random_on_surveillance_20w_k400.list
+        --exp-name ucf-videoMae-test-8-17_8-15_finetune_random_on_surveillance_20w_k400
+      ucf-videoMae-8-21_8-18_finetune_k400:
+        --dataset ucf --feature-group both --fusion concat --feature-size 768 --use_dic_gt
+        --feat-extractor videoMAE --aggregate_text --extra_loss
+        --rgb-list list/ucf-videoMae-8-21_8-18_finetune_k400.list
+        --test-rgb-list list/ucf-videoMae-test-8-21_8-18_finetune_k400.list
+        --exp-name ucf-videoMae-8-21_8-18_finetune_k400
+      ucf-videoMae-finetune_pretrain_with_RandomMaskinK400-100_457:
+        --dataset ucf --feature-group both --fusion concat --feature-size 768 --use_dic_gt
+        --feat-extractor videoMAE --aggregate_text --extra_loss
+        --rgb-list list/ucf-videoMae-finetune_pretrain_with_RandomMaskinK400-100_457.list
+        --test-rgb-list list/ucf-videoMae-test-finetune_pretrain_with_RandomMaskinK400-100_457.list
+        --exp-name ucf-videoMae-finetune_pretrain_with_RandomMaskinK400-100_457
+
+
+
     ucf-clip:
       --dataset ucf --feature-group both --fusion concat --aggregate_text --extra_loss  --use_dic_gt 
       --feat-extractor clip --feature-size 512  

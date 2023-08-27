@@ -1,14 +1,20 @@
-echo start peocess!
+echo start process!
 set -e -x   # -e stop when any code raise error; -x print command
 
 #ST default
 #python main.py --dataset shanghai --feature-group both --fusion add --aggregate_text --extra_loss --use_dic_gt --exp-name shanghai-i3d-official
 
-#8.13
-#ucf-videoMae-test-8-17_8-15_finetune_random_on_surveillance_20w_k400
-python main.py --dataset ucf --feature-group both --fusion concat --feature-size 768 --use_dic_gt --feat-extractor videoMAE --aggregate_text --extra_loss --rgb-list list/ucf-videoMae-8-17_8-15_finetune_random_on_surveillance_20w_k400.list --test-rgb-list list/ucf-videoMae-test-8-17_8-15_finetune_random_on_surveillance_20w_k400.list --exp-name ucf-videoMae-test-8-17_8-15_finetune_random_on_surveillance_20w_k400
-#ucf-i3d-official-only-text
-python main.py --dataset ucf --feature-group text --fusion add --aggregate_text --extra_loss --use_dic_gt --exp-name ucf-i3d-official-only-text
+#8.25
+#ucf-videoMae-finetune_pretrain_with_RandomMaskinK400-100_457
+python main.py --dataset ucf --feature-group both --fusion concat --feature-size 768 --use_dic_gt --feat-extractor videoMAE --aggregate_text --extra_loss --rgb-list list/ucf-videoMae-finetune_pretrain_with_RandomMaskinK400-100_457.list --test-rgb-list list/ucf-videoMae-test-finetune_pretrain_with_RandomMaskinK400-100_457.list --exp-name ucf-videoMae-finetune_pretrain_with_RandomMaskinK400-100_457
+#ucf-videoMae-8-21_8-18_finetune_k400
+python main.py --dataset ucf --feature-group both --fusion concat --feature-size 768 --use_dic_gt --feat-extractor videoMAE --aggregate_text --extra_loss --rgb-list list/ucf-videoMae-8-21_8-18_finetune_k400.list --test-rgb-list list/ucf-videoMae-test-8-21_8-18_finetune_k400.list --exp-name ucf-videoMae-8-21_8-18_finetune_k400
+
+#8.23
+##ucf-videoMae-test-8-17_8-15_finetune_random_on_surveillance_20w_k400
+#python main.py --dataset ucf --feature-group both --fusion concat --feature-size 768 --use_dic_gt --feat-extractor videoMAE --aggregate_text --extra_loss --rgb-list list/ucf-videoMae-8-17_8-15_finetune_random_on_surveillance_20w_k400.list --test-rgb-list list/ucf-videoMae-test-8-17_8-15_finetune_random_on_surveillance_20w_k400.list --exp-name ucf-videoMae-test-8-17_8-15_finetune_random_on_surveillance_20w_k400
+##ucf-i3d-official-only-text
+#python main.py --dataset ucf --feature-group text --fusion add --aggregate_text --extra_loss --use_dic_gt --exp-name ucf-i3d-official-only-text
 
 
 #8.21
