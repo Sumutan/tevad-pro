@@ -24,21 +24,14 @@ class Dataset(data.Dataset):
             else:
                 self.rgb_list_file = args.test_rgb_list
 
-        # # deal with different I3D feature version
-        # if 'v2' in self.dataset:
-        #     self.feat_ver = 'v2'
-        # elif 'v3' in self.dataset:
-        #     self.feat_ver = 'v3'
-        # else:
-        #     self.feat_ver = 'v1'
-
         self.tranform = transform
         self.test_mode = test_mode
         self._parse_list()
         self.num_frame = 0
         self.labels = None
         self.feat_extractor = args.feat_extractor
-        self.caption_extractor= args.caption_extractor
+        self.caption_extractor = args.caption_extractor
+
     def _parse_list(self):
         self.list = list(open(self.rgb_list_file))
         if self.test_mode is False:  # list for training would need to be ordered from normal to abnormal
@@ -56,6 +49,13 @@ class Dataset(data.Dataset):
                 else:
                     self.list = self.list[:810]
                     print('abnormal list for ucf')
+            elif 'TAD' in self.dataset:
+                if self.is_normal:
+                    self.list = self.list[190:]
+                    print('normal list for TAD')
+                else:
+                    self.list = self.list[:190]
+                    print('abnormal list for TAD')
             elif 'violence' in self.dataset:
                 if self.is_normal:
                     self.list = self.list[1904:]
@@ -84,13 +84,6 @@ class Dataset(data.Dataset):
         label = self.get_label()  # get video level label 0/1
         vis_feature_path = self.list[index].strip('\n')
 
-        # 作者关于数据集版本的一些路径处理
-        # if self.feat_ver in ['v2', 'v3']:
-        #     if self.feat_ver == 'v2':
-        #         vis_feature_path = vis_feature_path.replace('i3d_v1', 'i3d_v2')
-        #     elif self.feat_ver == 'v3':
-        #         vis_feature_path = vis_feature_path.replace('i3d_v1', 'i3d_v3')
-
         features = np.load(vis_feature_path, allow_pickle=True)  # allow_pickle允许读取其中的python对象
         features = np.array(features, dtype=np.float32)
 
@@ -103,6 +96,12 @@ class Dataset(data.Dataset):
                 pattern = r'\d+_\d+'
                 match = re.search(pattern, vis_feature_path.split("/")[-1])
                 text_path = "save/Shanghai/" + self.emb_folder + "/" + match.group() + "_emb.npy"
+            elif 'TAD' in self.dataset:
+                if self.feat_extractor == 'videoMAE':
+                    text_path = "save/TAD/" + self.emb_folder + "/" + \
+                                vis_feature_path.split("/")[-1].split("_videomae.npy")[0] + "_emb.npy"
+                else:
+                    raise NotImplementedError
             features = features.transpose(1, 0, 2)  # [10,no.,768]->[no.,10,768]
         elif self.feat_extractor == 'i3d':
             if 'ucf' in self.dataset:
@@ -115,6 +114,8 @@ class Dataset(data.Dataset):
                 text_path = "save/UCSDped2/" + self.emb_folder + "/" + vis_feature_path.split("/")[-1][:-7] + "emb.npy"
             elif 'TE2' in self.dataset:
                 text_path = "save/TE2/" + self.emb_folder + "/" + vis_feature_path.split("/")[-1][:-7] + "emb.npy"
+            elif 'TAD' in self.dataset:
+                text_path = "save/TAD/" + self.emb_folder + "/" + vis_feature_path.split("/")[-1][:-7] + "emb.npy"
             else:
                 raise Exception("Dataset undefined!!!")
         text_features = np.load(text_path, allow_pickle=True)
@@ -122,9 +123,9 @@ class Dataset(data.Dataset):
         # assert features.shape[0] == text_features.shape[0]
 
         if self.caption_extractor == 'swinBERT':
-            if self.feature_size == 1024:
-                text_features = np.tile(text_features, (5, 1, 1))  # [10,snippet no.,768]
-            elif self.feature_size in [2048, 768, 512]:
+            # if self.feature_size == 1024:  #这里不知道为什么要这么设置,先搁置
+            #     text_features = np.tile(text_features, (5, 1, 1))  # [10,snippet no.,768]
+            if self.feature_size in [2048, 1024, 768, 512]:  # vis feature 是按10_crop提的，但text提1crop，所以tile对齐维度
                 text_features = np.tile(text_features, (10, 1, 1))  # [10,snippet no.,768]
             else:
                 raise Exception("Feature size undefined!!!")
@@ -146,7 +147,7 @@ class Dataset(data.Dataset):
                     raise NotImplementedError
                 return features, text_features, lableFileName
 
-            return features, text_features  #原代码的输出
+            return features, text_features  # 原代码的输出
         else:  # train mode
             # process 10-cropped snippet feature
             features = features.transpose(1, 0, 2)  # [snippet no., 10, 2048] -> [10, snippet no., 2048]

@@ -13,7 +13,7 @@ parser.add_argument('--sampling', type=int, default=1, help='sampling of videos'
 # feature config
 parser.add_argument('--feature-group', default='both', choices=['both', 'vis', 'text'],
                     help='feature groups used for the model')
-parser.add_argument('--fusion', type=str, default='concat', help='how to fuse vis and text features')
+parser.add_argument('--fusion', type=str, default='concat',help='how to fuse vis and text features')
 parser.add_argument('--feat-extractor', default='i3d', choices=['i3d', 'c3d', 'videoMAE', 'clip'])
 parser.add_argument('--feature-size', type=int, default=2048, help='size of vis feature (default: 2048)')
 parser.add_argument('--caption-extractor', default='swinBERT', choices=['swinBERT', 'clip'])
@@ -28,7 +28,8 @@ parser.add_argument('--lr', type=str, default='[0.001]*15000', help='learning ra
 parser.add_argument('--batch-size', type=int, default=32, help='number of instances in a batch of data (default: 16)')
 parser.add_argument('--workers', default=4, help='number of workers in dataloader')
 parser.add_argument('--model-name', default='rtfm', help='name to save model')
-parser.add_argument('--pretrained-ckpt', default=None, help='ckpt for pretrained model')
+parser.add_argument('--pretrained-ckpt', default=None, help='ckpt for pretrained model'
+                                                            '')
 parser.add_argument('--num-classes', type=int, default=1, help='number of class')
 parser.add_argument('--plot-freq', type=int, default=10, help='frequency of plotting (default: 10)')
 

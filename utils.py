@@ -203,6 +203,8 @@ def get_gt(ds, gt_file):
             gt = np.load('list/gt-sh2.npy')
         elif 'ucf' in ds:
             gt = np.load('list/gt-ucf.npy')
+        # elif 'TAD' in ds:
+        #     gt = np.load('list/gt-ucf.npy')
         elif 'violence' in ds:
             gt = np.load('list/gt-violence.npy')
         elif 'ped2' in ds:

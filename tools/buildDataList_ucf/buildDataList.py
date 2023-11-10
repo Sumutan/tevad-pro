@@ -36,7 +36,7 @@ def check_files_existence(file_list):
     return missing_files
 
 
-feature_name = '8-31_8-27_finetune_frame_only_surveillance_20w'
+feature_name = '10-13_10-4_finetune'
 # 替换ucf文索引中的首尾
 def rep_ucf(oldpath):
     new_prefix_ = f'/home/sh/sh/programs/TEVAD-main/save/Crime/{feature_name}/'  # 根据新的路径修改此处,记得加'/'
@@ -46,11 +46,10 @@ def rep_ucf(oldpath):
 
 
 if __name__ == '__main__':
-    feature_name='difToken910'
-    # source_file_path = 'pathlist/ucf-i3d_raw.list'
-    # aim_file_path = f'ucf-videoMae-{feature_name}.list'
-    source_file_path = 'pathlist/ucf-i3d-test_raw.list'
-    aim_file_path = f'ucf-videoMae-test-{feature_name}.list'
+    source_file_path = 'pathlist/ucf-i3d_raw.list'
+    aim_file_path = f'ucf-videoMae-{feature_name}.list'
+    # source_file_path = 'pathlist/ucf-i3d-test_raw.list'
+    # aim_file_path = f'ucf-videoMae-test-{feature_name}.list'
     # 获取列表文件
     source_file_list = getlist(source_file_path)
     # 处理列表

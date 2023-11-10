@@ -89,7 +89,7 @@ class _NonLocalBlockND(nn.Module):
         f = torch.matmul(theta_x,
                          phi_x)  # M=(F_c1)(F_c2)^T, train: M.shape=[640,32,32], 32 is the no. of clips in each video
         N = f.size(-1)
-        f_div_C = f / N      #这里与Attention经典实现的 /sqrt(d) 不同
+        f_div_C = f / N  # 这里与Attention经典实现的 /sqrt(d) 不同
 
         y = torch.matmul(f_div_C, g_x)  # train: y.shape=[640,32,256]
         y = y.permute(0, 2, 1).contiguous()
@@ -116,28 +116,28 @@ class Aggregate(nn.Module):  # MTN
         bn = nn.BatchNorm1d
         self.len_feature = len_feature
         self.conv_1 = nn.Sequential(
-            nn.Conv1d(in_channels=len_feature, out_channels=int(len_feature/4), kernel_size=3,
+            nn.Conv1d(in_channels=len_feature, out_channels=int(len_feature / 4), kernel_size=3,
                       stride=1, dilation=1, padding=1),
             nn.ReLU(),
-            bn(int(len_feature/4))
+            bn(int(len_feature / 4))
             # nn.dropout(0.7)
         )
         self.conv_2 = nn.Sequential(
-            nn.Conv1d(in_channels=len_feature, out_channels=int(len_feature/4), kernel_size=3,
+            nn.Conv1d(in_channels=len_feature, out_channels=int(len_feature / 4), kernel_size=3,
                       stride=1, dilation=2, padding=2),
             nn.ReLU(),
-            bn(int(len_feature/4))
+            bn(int(len_feature / 4))
             # nn.dropout(0.7)
         )
         self.conv_3 = nn.Sequential(
-            nn.Conv1d(in_channels=len_feature, out_channels=int(len_feature/4), kernel_size=3,
+            nn.Conv1d(in_channels=len_feature, out_channels=int(len_feature / 4), kernel_size=3,
                       stride=1, dilation=4, padding=4),
             nn.ReLU(),
-            bn(int(len_feature/4))
+            bn(int(len_feature / 4))
             # nn.dropout(0.7),
         )
         self.conv_4 = nn.Sequential(
-            nn.Conv1d(in_channels=len_feature, out_channels=int(len_feature/4), kernel_size=1,
+            nn.Conv1d(in_channels=len_feature, out_channels=int(len_feature / 4), kernel_size=1,
                       stride=1, padding=0, bias=False),
             nn.ReLU(),
             # nn.dropout(0.7),
@@ -150,7 +150,7 @@ class Aggregate(nn.Module):  # MTN
             # nn.dropout(0.7)
         )
 
-        self.non_local = NONLocalBlock1D(int(len_feature/4), sub_sample=False, bn_layer=True)
+        self.non_local = NONLocalBlock1D(int(len_feature / 4), sub_sample=False, bn_layer=True)
 
     def forward(self, x):
         # x: (B, T, F)
@@ -185,6 +185,10 @@ class Model(nn.Module):
         self.feature_group = args.feature_group
         self.aggregate_text = args.aggregate_text
         self.num_segments = 32
+        if "TAD" in args.dataset:
+            self.num_segments = 24
+        # if "ucf" in args.dataset:
+        #     self.num_segments = 64
         self.k_abn = self.num_segments // 10  # top k for abnormal snippets
         self.k_nor = self.num_segments // 10  # top k for normal snippets
 
@@ -229,8 +233,8 @@ class Model(nn.Module):
         bs, ncrops, t, f = out.size()  # t is no. of clips
         bs2, ncrops2, t2, f2 = text.size()
 
-        out = out.view(-1, t, f)   # [64*10,32,2048]
-        out2 = text.view(-1, t2, f2)   # [64*10,32,768]
+        out = out.view(-1, t, f)  # [64*10,32,2048]
+        out2 = text.view(-1, t2, f2)  # [64*10,32,768]
 
         out = self.Aggregate(out)  # train: out.shape=[640,32,2048]
         out = self.drop_out(out)  # train: out.shape=[640,32,2048]
@@ -290,7 +294,8 @@ class Model(nn.Module):
         abnormal_features = features[self.batch_size * ncrops:]  # train: abnormal_features.shape=[320,32,2048]
         abnormal_scores = scores[self.batch_size:]  # train: abnormal_scores.shape=[32,32,1]
 
-        feat_magnitudes = torch.norm(features, p=2,dim=2)  # train: feat_magnitudes.shape=[640,32], use l2 norm to compute the feature magnitude
+        feat_magnitudes = torch.norm(features, p=2,
+                                     dim=2)  # train: feat_magnitudes.shape=[640,32], use l2 norm to compute the feature magnitude
         feat_magnitudes = feat_magnitudes.view(bs, ncrops, -1).mean(1)  # train: feat_magnitudes.shape=[64,32]
         nfea_magnitudes = feat_magnitudes[0:self.batch_size]  # train: shape=[32,32], normal feature magnitudes
         afea_magnitudes = feat_magnitudes[self.batch_size:]  # train: shape=[32,32], abnormal feature magnitudes

@@ -4,7 +4,7 @@ from sklearn.metrics import auc, roc_curve, precision_recall_curve, average_prec
 import numpy as np
 from utils import get_gt, anomap, compute_auc, compute_far
 import pickle
-
+import os
 
 def pad_array(arr, length):  # padding 1-D ndarray by last element
     last_element = arr[-1]
@@ -28,6 +28,8 @@ def test(dataloader, model, args, viz, device, plot_curve=False, logger=None, st
             gt_dic = get_gt_dic('./list/gt-sh2-dic.pickle')
         elif 'ucf' in args.dataset:
             gt_dic = get_gt_dic('./list/gt-ucf-dic.pickle')
+        elif 'TAD' in args.dataset:
+            gt_dic = get_gt_dic('./list/gt-tad-dic.pickle')
         else:
             raise ValueError('Dataset not supported')
 
@@ -109,6 +111,11 @@ def test(dataloader, model, args, viz, device, plot_curve=False, logger=None, st
                 pred = torch.cat((pred, sig))
 
             gt = get_gt(args.dataset, args.gt)
+
+        #tcc
+        if step == 760:
+            with open(os.path.join('pickle','best_result.pickle'),'wb') as file:
+                pickle.dump(predict_dict,file)
 
         pred = list(pred.cpu().detach().numpy())
         pred = np.repeat(np.array(pred), snipit_length)  # 数组中的每个元素重复16遍，即同一个clip中的16帧共享相同的预测结果

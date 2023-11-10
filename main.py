@@ -52,7 +52,7 @@ if __name__ == '__main__':
     test_loader = DataLoader(Dataset(args, test_mode=True),
                              batch_size=1, shuffle=False,
                              num_workers=0, pin_memory=False, generator=torch.Generator(device='cuda'))
-
+    print(test_loader)
     model = Model(args)
     if args.pretrained_ckpt is not None:
         print("Loading pretrained model " + args.pretrained_model)
