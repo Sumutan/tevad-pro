@@ -113,9 +113,9 @@ def test(dataloader, model, args, viz, device, plot_curve=False, logger=None, st
             gt = get_gt(args.dataset, args.gt)
 
         #tcc
-        if step == 760:
-            with open(os.path.join('pickle','best_result.pickle'),'wb') as file:
-                pickle.dump(predict_dict,file)
+        # if step == 760:
+        #     with open(os.path.join('pickle','best_result.pickle'),'wb') as file:
+        #         pickle.dump(predict_dict,file)
 
         pred = list(pred.cpu().detach().numpy())
         pred = np.repeat(np.array(pred), snipit_length)  # 数组中的每个元素重复16遍，即同一个clip中的16帧共享相同的预测结果
@@ -133,9 +133,12 @@ def test(dataloader, model, args, viz, device, plot_curve=False, logger=None, st
 
         # plot_curve = True
         if plot_curve:  # 画图模式下只画图
-            anomap(predict_dict, gt_dict, args.dataset + '_' + args.feat_extractor,
+            anomap(predict_dict, gt_dict, args.dataset + '_' + args.exp_name,
                    step, args.abn_curve_save_root)
-            return
+            if args.use_dic_gt:
+                return rec_auc_all, ap, rec_auc_abn, far_all, far_abn
+            else:
+                return rec_auc_all, ap, 0, far_all, 0
 
         # viz.plot_lines('pr_auc', pr_auc_all)
         # viz.plot_lines('auc', rec_auc_all)

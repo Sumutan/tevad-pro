@@ -27,6 +27,6 @@ sudo -v  #获取sudo权限
 
 
 # download TAD
-export feature_name=TAD_11-1_10-15_finetune_L
+export feature_name=TAD_9-5_9-1_finetune_AISO_0.5_SP_MMnorm_a0.2
 sudo ./obsutil cp obs://kinetics400/TAD_features/${feature_name}/ /home/sh/TEVAD/save/tmp -r -f
 

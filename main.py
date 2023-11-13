@@ -54,7 +54,7 @@ if __name__ == '__main__':
                              num_workers=0, pin_memory=False, generator=torch.Generator(device='cuda'))
     print(test_loader)
     model = Model(args)
-    if args.pretrained_ckpt is not None:
+    if args.pretrained_model is not None:
         print("Loading pretrained model " + args.pretrained_model)
         model.load_state_dict(torch.load(args.pretrained_model))
     # for name, value in model.named_parameters():
@@ -70,8 +70,7 @@ if __name__ == '__main__':
     # optimizer = optim.AdamW(model.parameters(),
     #                        lr=config.lr[0], weight_decay=0.005)  # default lr=0.001
 
-    test_info = {"epoch": [], "test_AUC": [], "test_AP": [], "test_AUC_abn": []
-        , "test_far_all": [], "test_far_abn": []}
+    test_info = {"epoch": [], "test_AUC": [], "test_AP": [], "test_AUC_abn": [], "test_far_all": [], "test_far_abn": []}
     train_info = {"epoch": [], "train_loss": []}
 
     best_AUC, best_ap = -1, -1
@@ -94,13 +93,10 @@ if __name__ == '__main__':
             loadera_iter = iter(train_aloader)
 
         train(loadern_iter, loadera_iter, model, args, optimizer, viz, device, logger=trainLogger, step=step)
-
+        # test
         if step % 5 == 0 and step > 50:
-            # plot = False if step < 500 else True
-            plot = False
             rec_auc_all, ap, rec_auc_abn, far_all, far_abn = test(test_loader, model, args, viz, device,
-                                                                  plot_curve=plot, logger=testLogger, step=step)
-
+                                                                  plot_curve=False, logger=testLogger, step=step)
             test_info["epoch"].append(step)
             test_info["test_AUC"].append(rec_auc_all)
             test_info["test_AP"].append(ap)
@@ -134,33 +130,27 @@ if __name__ == '__main__':
                                                                       APs_min * 100, APs_max * 100))
             else:  # user AUROC as the metric for other datasets
                 if test_info["test_AUC"][-1] > best_AUC:
-                    # test(test_loader, model, args, viz, device, plot_curve=True, step=step)
+                    if args.plot_best:
+                        test(test_loader, model, args, viz, device, plot_curve=True, step=step)
                     best_AUC = test_info["test_AUC"][-1]
                     best_epoch = step
                     # torch.save(model.state_dict(), './ckpt/' + '{}-{}-{}-{}-{}-{}-{}-{}-{}.pkl'
                     #            .format(args.dataset, args.feature_group, text_opt, args.fusion, args.alpha,
                     #                    extra_loss_opt, step, args.seed, sb_pt_name))
-                    os.makedirs('./ckpt/' + viz_name,exist_ok=True)
-                    torch.save(model.state_dict(), './ckpt/' + viz_name +'/{}-{}-{}-{}-{}-{}-{}-{}-{}.pkl'
+                    os.makedirs('./ckpt/' + viz_name, exist_ok=True)
+                    torch.save(model.state_dict(), './ckpt/' + viz_name + '/{}-{}-{}-{}-{}-{}-{}-{}-{}.pkl'
                                .format(args.dataset, args.feature_group, text_opt, args.fusion, args.alpha,
                                        extra_loss_opt, step, args.seed, sb_pt_name))
-                    # save_best_record(test_info, os.path.join(output_path,
-                    #                                          '{}-{}-{}-{}-{}-{}-{}-{}-AUC.txt'.format(args.dataset,
-                    #                                                                                   args.feature_group,
-                    #                                                                                   text_opt,
-                    #                                                                                   args.fusion,
-                    #                                                                                   args.alpha,
-                    #                                                                                   extra_loss_opt,
-                    #                                                                                   step,
-                    #                                                                                   sb_pt_name)),
-                    #                  "test_AUC")
+                    # save_best_record(test_info, os.path.join(output_path,'{}-{}-{}-{}-{}-{}-{}-{}-AUC.txt'
+                    #                                          .format(args.dataset,args.feature_group,text_opt,
+                    #                                                  args.fusion,args.alpha,extra_loss_opt,step,
+                    #                                                 sb_pt_name)),"test_AUC")
 
                 AUCs = test_info["test_AUC"]
-                AUCs_mean, AUCs_median, AUCs_std, AUCs_max, AUCs_min = np.mean(AUCs), np.median(AUCs), np.std(
-                    AUCs), np.max(AUCs), np.min(AUCs)
+                AUCs_mean, AUCs_median, AUCs_std, AUCs_max, AUCs_min = \
+                    np.mean(AUCs), np.median(AUCs), np.std(AUCs), np.max(AUCs), np.min(AUCs)
                 print("std\tmean\tmedian\tmin\tmax\tAUC")
-                print(
-                    "{:.2f}\t{:.2f}\t{:.2f}\t{:.2f}\t{:.2f}".format(AUCs_std * 100, AUCs_mean * 100, AUCs_median * 100,
-                                                                    AUCs_min * 100, AUCs_max * 100))
+                print("{:.2f}\t{:.2f}\t{:.2f}\t{:.2f}\t{:.2f}"
+                      .format(AUCs_std * 100, AUCs_mean * 100, AUCs_median * 100,AUCs_min * 100, AUCs_max * 100))
     print("Best result:" + viz_name + "-" + str(best_epoch))
     torch.save(model.state_dict(), f'./ckpt/{viz_name}/' + args.dataset + 'final.pkl')
