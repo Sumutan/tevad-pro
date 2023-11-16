@@ -3,7 +3,7 @@ cd /home/sh/software/obsutil_linux_amd64_5.4.11
 sudo -v  #获取sudo权限
 
 # download folder
-#sudo ./obsutil cp obs://kinetics400/TAD /home/sh/dataset -r -f
+#sudo ./obsutil cp obs://heron-nbu/csh/ckpt /home/sh/tmp -r -f
 # upload folder
 #sudo ./obsutil cp "/media/sh/9a898338-9715-47b4-bca4-43f2270c463a/sh/dataset/TAD/depth" obs://kinetics400/TAD -r -f
 
@@ -27,6 +27,9 @@ sudo -v  #获取sudo权限
 
 
 # download TAD
-export feature_name=TAD_9-5_9-1_finetune_AISO_0.5_SP_MMnorm_a0.2
-sudo ./obsutil cp obs://kinetics400/TAD_features/${feature_name}/ /home/sh/TEVAD/save/tmp -r -f
+#export feature_name=TAD_9-5_9-1_finetune_AISO_0.5_SP_norm_a0.05
+#sudo ./obsutil cp obs://kinetics400/TAD_features/${feature_name}/ /home/sh/TEVAD/save/tmp -r -f
 
+# download UCF
+export feature_name=UCF_9-5_9-1_finetune_dif_0.5_SP_norm_clip
+sudo ./obsutil cp obs://kinetics400/ucf_features/${feature_name}/ /home/sh/TEVAD/save/tmp -r -f
