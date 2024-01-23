@@ -1,6 +1,9 @@
+"""
+批量修改目标文件夹下的所有文件名
+"""
 import os
 
-dir="/media/sh/9a898338-9715-47b4-bca4-43f2270c463a/sh/programs/TEVAD-main/save/TAD/TAD_11-1_10-15_finetune_L"
+dir="/home/sh/TEVAD/save/TAD/TAD_GL-20e-nofreeze"
 for file in os.listdir(dir):
     old_name=os.path.join(dir,file)
     new_name=os.path.join(dir,file.replace(".mp4",""))

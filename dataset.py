@@ -102,6 +102,11 @@ class Dataset(data.Dataset):
                                 vis_feature_path.split("/")[-1].split("_videomae.npy")[0] + "_emb.npy"
                 else:
                     raise NotImplementedError
+            elif 'violence' in self.dataset:
+                text_path = "save/Violence/" + self.emb_folder + "/" + \
+                            vis_feature_path.split("/")[-1].split("_videomae.npy")[0] + "_emb.npy"
+            else:
+                raise NotImplementedError
             features = features.transpose(1, 0, 2)  # [10,no.,768]->[no.,10,768]
         elif self.feat_extractor == 'i3d':
             if 'ucf' in self.dataset:
@@ -123,9 +128,9 @@ class Dataset(data.Dataset):
         # assert features.shape[0] == text_features.shape[0]
 
         if self.caption_extractor == 'swinBERT':
-            # if self.feature_size == 1024:  #这里不知道为什么要这么设置,先搁置
-            #     text_features = np.tile(text_features, (5, 1, 1))  # [10,snippet no.,768]
-            if self.feature_size in [2048, 1024, 768, 512]:  # vis feature 是按10_crop提的，但text提1crop，所以tile对齐维度
+            if 'violence' in self.dataset and self.feature_size == 1024:  #这里不知道为什么要这么设置,先搁置
+                text_features = np.tile(text_features, (5, 1, 1))  # [10,snippet no.,768]
+            elif self.feature_size in [2048, 1024, 768, 512]:  # vis feature 是按10_crop提的，但text提1crop，所以tile对齐维度
                 text_features = np.tile(text_features, (10, 1, 1))  # [10,snippet no.,768]
             else:
                 raise Exception("Feature size undefined!!!")

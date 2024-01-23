@@ -36,7 +36,7 @@ def check_files_existence(file_list):
     return missing_files
 
 
-feature_name = '10-13_10-4_finetune'
+feature_name = 'UCF_ten_crop_videomae'
 # 替换ucf文索引中的首尾
 def rep_ucf(oldpath):
     new_prefix_ = f'/home/sh/sh/programs/TEVAD-main/save/Crime/{feature_name}/'  # 根据新的路径修改此处,记得加'/'

@@ -7,7 +7,7 @@ import option
 from utils import *
 from config import *
 
-viz = Visualizer(env='shanghai tech 10 crop', use_incoming_socket=False)
+viz = Visualizer(env='ucf 10 crop', use_incoming_socket=False)
 
 if __name__ == '__main__':
     args = option.parser.parse_args()
@@ -18,9 +18,9 @@ if __name__ == '__main__':
                               num_workers=0, pin_memory=False)
 
     model = Model(args)
-    if args.pretrained_ckpt is not None:
-        print("Loading pretrained model " + args.pretrained_ckpt)
-        model.load_state_dict(torch.load(args.pretrained_ckpt))
+    if args.pretrained_model is not None:
+        print("Loading pretrained model " + args.pretrained_model)
+        model.load_state_dict(torch.load(args.pretrained_model))
     else:
         if "shanghai" in args.dataset:
             model.load_state_dict(torch.load('./ckpt/my_best/shanghai_v2-both-text_agg-add-1-1-extra_loss-595-i3d-best.pkl'))
@@ -44,8 +44,7 @@ if __name__ == '__main__':
     if not os.path.exists('./ckpt'):
         os.makedirs('./ckpt')
 
-    optimizer = optim.Adam(model.parameters(),
-                            lr=config.lr[0], weight_decay=0.005)
+    optimizer = optim.Adam(model.parameters(),lr=config.lr[0], weight_decay=0.005)
 
     best_AUC = -1
     output_path = 'output'   # put your own path here

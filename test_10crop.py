@@ -30,6 +30,8 @@ def test(dataloader, model, args, viz, device, plot_curve=False, logger=None, st
             gt_dic = get_gt_dic('./list/gt-ucf-dic.pickle')
         elif 'TAD' in args.dataset:
             gt_dic = get_gt_dic('./list/gt-tad-dic.pickle')
+        elif 'violence' in args.dataset:
+            gt_dic = get_gt_dic('./list/gt-violence-dic.pickle')
         else:
             raise ValueError('Dataset not supported')
 
@@ -112,11 +114,6 @@ def test(dataloader, model, args, viz, device, plot_curve=False, logger=None, st
 
             gt = get_gt(args.dataset, args.gt)
 
-        #tcc
-        # if step == 760:
-        #     with open(os.path.join('pickle','best_result.pickle'),'wb') as file:
-        #         pickle.dump(predict_dict,file)
-
         pred = list(pred.cpu().detach().numpy())
         pred = np.repeat(np.array(pred), snipit_length)  # 数组中的每个元素重复16遍，即同一个clip中的16帧共享相同的预测结果
 
@@ -164,7 +161,7 @@ def test(dataloader, model, args, viz, device, plot_curve=False, logger=None, st
 
         if logger:
             logger.log(
-                f"Epoch {step}  rec_auc_all: {rec_auc_all:.4f}  rec_auc_abn: {rec_auc_abn:.4f}  far_all: {far_all:.4f} far_abn:{far_abn:.4f}")
+                f"Epoch {step}  rec_auc_all: {rec_auc_all:.4f}  rec_auc_abn: {rec_auc_abn:.4f}  far_all: {far_all:.4f} far_abn:{far_abn:.4f} ap: {ap:.4f}")
 
         if args.use_dic_gt:
             return rec_auc_all, ap, rec_auc_abn, far_all, far_abn

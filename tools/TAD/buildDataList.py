@@ -56,7 +56,7 @@ def build_TAD_list(featureName, source_file_path, aim_file_path):
 
 
 if __name__ == '__main__':
-    feature_name = 'TAD_9-5_9-1_finetune_AISO_0.5_SP_norm_a0.05'
+    feature_name = 'TAD_GL-20e-nofreeze'
 
     source_file_path_train = 'pathlist/TAD_train_list_AISO_0.5.txt'
     source_file_path_val = 'pathlist/TAD_val_list_AISO_0.5.txt'

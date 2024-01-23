@@ -1,8 +1,9 @@
 caogao/
+check/
 ckpt/
 output/
 results/
-phote/
+photo/
 save/
 
 tools/buildDataList_ST/news
@@ -19,3 +20,4 @@ archive
 list/annotations
 hmgics
 
+/photo/

@@ -9,7 +9,7 @@ sudo -v  #获取sudo权限
 
 #Download Features
 # download ucf_features
-#export feature_name=10-13_10-4_finetune   #输入特征文件夹名
+#export feature_name=UCF_9-5_9-1_finetune_DT0.25_SPa0.1   #输入特征文件夹名
 #sudo ./obsutil cp obs://kinetics400/ucf_features/${feature_name}/ /home/sh/TEVAD/save/tmp -r -f
 
 # download SHT_features
@@ -27,9 +27,15 @@ sudo -v  #获取sudo权限
 
 
 # download TAD
-#export feature_name=TAD_9-5_9-1_finetune_AISO_0.5_SP_norm_a0.05
-#sudo ./obsutil cp obs://kinetics400/TAD_features/${feature_name}/ /home/sh/TEVAD/save/tmp -r -f
+export feature_name=TAD_GL-20e-nofreeze
+sudo ./obsutil cp obs://kinetics400/TAD_features/${feature_name}/ /home/sh/TEVAD/save/tmp -r -f
+
+#TAD_8-17_8-15_finetune_random_on_surveillance_20w_k400
+#TAD_finetune_pretrain_with_RandomMaskinK400-100_457
+#TAD_8-12_finetune-8-10_8-8_k400_with_surveillancel-100_469
+
 
 # download UCF
-export feature_name=UCF_9-5_9-1_finetune_dif_0.5_SP_norm_clip
-sudo ./obsutil cp obs://kinetics400/ucf_features/${feature_name}/ /home/sh/TEVAD/save/tmp -r -f
+#export feature_name=UCF_9-5_9-1_finetune_dif_0.5_SP_norm_a0.2
+#sudo ./obsutil cp obs://kinetics400/ucf_features/${feature_name}/ /home/sh/TEVAD/save/tmp -r -f
+
