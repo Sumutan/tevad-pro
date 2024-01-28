@@ -4,7 +4,7 @@ parser = argparse.ArgumentParser(description='RTFM')
 parser.add_argument('--exp-name', type=str, default=None, help='exp-name，also viz_name')
 # dataset config
 parser.add_argument('--use_dic_gt', action='store_true', default=True, help='get GrandTruth from a pickle file')
-parser.add_argument('--abn_curve_save_root', type=str, default='./photo', help='folder for abn_curve_savepath')
+parser.add_argument('--abn_curve_save_root', type=str, default='./curve', help='folder for abn_curve_savepath')
 parser.add_argument('--dataset', default='ucf', help='dataset to train on (shanghai, ucf, ped2, violence, TE2)')
 # parser.add_argument('--alignment_method', type=str, default='add', choices=['add', 'cut'],
 #                     help='the alignment method to dealwith superfluous frames')

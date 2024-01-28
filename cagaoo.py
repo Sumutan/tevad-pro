@@ -1,6 +1,6 @@
 import numpy as np
 
 
-a=np.load('XD.npy')
-b=np.load('XD_emb.npy')
+a=np.load('list/gt-ucf.npy')
+b=np.load('list/gt-ucf-dic.pickle',allow_pickle=True)
 pass
