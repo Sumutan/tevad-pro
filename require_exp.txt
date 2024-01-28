@@ -1,0 +1,35 @@
+需要concat的feature及所属的实验：
+
+9-5_9-1_finetune	(default model 0)
+UCF_9-5_9-1_finetune_dif_0.5_SP_norm（default model）
+
+
+超参数mask ratio消融：
+ucf
+default model 0 + SP_norm  （等重新提）
+UCF_9-5_9-1_finetune_DT0.25_SPa0.1
+UCF_9-5_9-1_finetune_dif_0.5_SP_norm
+UCF_9-5_9-1_finetune_dif_0.75_SP_norm（在重新提）
+TAD
+default model 0 + SP_norm （等重新提）
+TAD_9-5_9-1_finetune_dif_0.25_SP_norm
+default model
+TAD_9-5_9-1_finetune_dif_0.75_SP_norm
+
+超参a消融：
+UCF
+difToken912_AISO_0.5
+UCF_9-5_9-1_finetune_dif_0.5_SP_norm_a0.05
+default model
+UCF_9-5_9-1_finetune_dif_0.5_SP_norm_a0.2
+TAD
+TAD_9-5_9-1_finetune_dif_0.5
+TAD_9-5_9-1_finetune_AISO_0.5_SP_norm_a0.05
+default model
+TAD_9-5_9-1_finetune_AISO_0.5_SP_norm_a0.2
+
+有无K400-finetune消融
+UCF
+UCF_9-1_pretrain_DT_SP	无K400-finetune
+TAD
+9-1_pretrain_DT_SP

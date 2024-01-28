@@ -39,9 +39,9 @@ def concatenate_features(folder_A, folder_B, output_folder):
 # folder_B = '/home/sh/TEVAD/save/Crime/9-5_9-1_finetune'
 # output_folder = '/home/sh/TEVAD/save/Crime/Clip_AISO.5_concat'
 
-folder_A = '/media/sh/9a898338-9715-47b4-bca4-43f2270c463a/sh/programs/TEVAD-main/save/TAD/TAD_9-5_9-1_finetune'
-folder_B = '/media/sh/9a898338-9715-47b4-bca4-43f2270c463a/sh/programs/TEVAD-main/save/TAD/TAD_9-5_9-1_finetune_KMeans'
-output_folder = '/home/sh/TEVAD/save/TAD/test'
+folder_A = '/media/sh/9a898338-9715-47b4-bca4-43f2270c463a/sh/programs/TEVAD-main/save/TAD/old/TAD_9-5_9-1_finetune'
+folder_B = '/media/sh/9a898338-9715-47b4-bca4-43f2270c463a/sh/programs/TEVAD-main/save/TAD/old/TAD_9-5_9-1_finetune_KMeans'
+output_folder = '/home/sh/TEVAD/save/TAD/CLIP-concat'
 
 
 concatenate_features(folder_A, folder_B, output_folder)
