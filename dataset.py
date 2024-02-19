@@ -80,49 +80,37 @@ class Dataset(data.Dataset):
             else:
                 raise Exception("Dataset undefined!!!")
 
+    def _get_text_emb_path(self,vis_feature_path):
+        postfix_length_dic={'videoMAE':len('videoMAE.npy'), #12
+                        'clip':len('clip.npy'),  # 8
+                        'i3d':len('i3d.npy')}    # 7
+        postfix_length=postfix_length_dic[self.feat_extractor]
+        if 'ucf' in self.dataset:
+            text_path = "save/Crime/" + self.emb_folder + "/" + vis_feature_path.split("/")[-1][:-postfix_length] + "emb.npy"
+        elif 'shanghai' in self.dataset:
+            text_path = "save/Shanghai/" + self.emb_folder + "/" + vis_feature_path.split("/")[-1][:-postfix_length] + "emb.npy"
+        elif 'violence' in self.dataset:
+            text_path = "save/Violence/" + self.emb_folder + "/" + vis_feature_path.split("/")[-1][:-postfix_length] + "emb.npy"
+        elif 'ped2' in self.dataset:
+            text_path = "save/UCSDped2/" + self.emb_folder + "/" + vis_feature_path.split("/")[-1][:-postfix_length] + "emb.npy"
+        elif 'TE2' in self.dataset:
+            text_path = "save/TE2/" + self.emb_folder + "/" + vis_feature_path.split("/")[-1][:-postfix_length] + "emb.npy"
+        elif 'TAD' in self.dataset:
+            text_path = "save/TAD/" + self.emb_folder + "/" + vis_feature_path.split("/")[-1][:-postfix_length] + "emb.npy"
+        else:
+            raise Exception("Dataset undefined!!!")
+
+        return text_path
     def __getitem__(self, index):
         label = self.get_label()  # get video level label 0/1
         vis_feature_path = self.list[index].strip('\n')
 
         features = np.load(vis_feature_path, allow_pickle=True)  # allow_pickle允许读取其中的python对象
         features = np.array(features, dtype=np.float32)
-
-        if self.feat_extractor in ['videoMAE', 'clip']:
-            # self.feat_extractor domain the feature shape because it is extracted by us, not author.
-            if 'ucf' in self.dataset:  # ucf mae feature
-                text_path = "save/Crime/" + self.emb_folder + "/" \
-                            + vis_feature_path.split("/")[-1].split("_x264")[0] + "_x264_emb.npy"
-            elif 'shanghai' in self.dataset:  # shanghaiTech clip feature
-                pattern = r'\d+_\d+'
-                match = re.search(pattern, vis_feature_path.split("/")[-1])
-                text_path = "save/Shanghai/" + self.emb_folder + "/" + match.group() + "_emb.npy"
-            elif 'TAD' in self.dataset:
-                if self.feat_extractor == 'videoMAE':
-                    text_path = "save/TAD/" + self.emb_folder + "/" + \
-                                vis_feature_path.split("/")[-1].split("_videomae.npy")[0] + "_emb.npy"
-                else:
-                    raise NotImplementedError
-            elif 'violence' in self.dataset:
-                text_path = "save/Violence/" + self.emb_folder + "/" + \
-                            vis_feature_path.split("/")[-1].split("_videomae.npy")[0] + "_emb.npy"
-            else:
-                raise NotImplementedError
+        if features.shape[0]==10: # 10 crop
             features = features.transpose(1, 0, 2)  # [10,no.,768]->[no.,10,768]
-        elif self.feat_extractor == 'i3d':
-            if 'ucf' in self.dataset:
-                text_path = "save/Crime/" + self.emb_folder + "/" + vis_feature_path.split("/")[-1][:-7] + "emb.npy"
-            elif 'shanghai' in self.dataset:
-                text_path = "save/Shanghai/" + self.emb_folder + "/" + vis_feature_path.split("/")[-1][:-7] + "emb.npy"
-            elif 'violence' in self.dataset:
-                text_path = "save/Violence/" + self.emb_folder + "/" + vis_feature_path.split("/")[-1][:-7] + "emb.npy"
-            elif 'ped2' in self.dataset:
-                text_path = "save/UCSDped2/" + self.emb_folder + "/" + vis_feature_path.split("/")[-1][:-7] + "emb.npy"
-            elif 'TE2' in self.dataset:
-                text_path = "save/TE2/" + self.emb_folder + "/" + vis_feature_path.split("/")[-1][:-7] + "emb.npy"
-            elif 'TAD' in self.dataset:
-                text_path = "save/TAD/" + self.emb_folder + "/" + vis_feature_path.split("/")[-1][:-7] + "emb.npy"
-            else:
-                raise Exception("Dataset undefined!!!")
+
+        text_path=self._get_text_emb_path(vis_feature_path)
         text_features = np.load(text_path, allow_pickle=True)
         text_features = np.array(text_features, dtype=np.float32)  # [snippet no., 768]
         # assert features.shape[0] == text_features.shape[0]
@@ -130,7 +118,7 @@ class Dataset(data.Dataset):
         if self.caption_extractor == 'swinBERT':
             if 'violence' in self.dataset and self.feature_size == 1024:  #这里不知道为什么要这么设置,先搁置
                 text_features = np.tile(text_features, (5, 1, 1))  # [10,snippet no.,768]
-            elif self.feature_size in [2048, 1024, 768, 512]:  # vis feature 是按10_crop提的，但text提1crop，所以tile对齐维度
+            elif self.feature_size in [2560,2048, 1280 ,1024, 768, 512]:  # vis feature 是按10_crop提的，但text提1crop，所以tile对齐维度
                 text_features = np.tile(text_features, (10, 1, 1))  # [10,snippet no.,768]
             else:
                 raise Exception("Feature size undefined!!!")
