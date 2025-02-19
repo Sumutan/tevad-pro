@@ -6,14 +6,24 @@ from utils import get_gt, anomap, compute_auc, compute_far
 import pickle
 import os
 
-def pad_array(arr, length):  # padding 1-D ndarray by last element
-    last_element = arr[-1]
-    padding_length = length - len(arr)
-    padding = [last_element] * padding_length
-    if padding_length>0:
+import numpy as np
+
+def pad_array(arr, length):
+    """
+    Pad a 1-D ndarray by the last element.
+    Args:
+        arr (ndarray): 1-D ndarray to be padded.
+        length (int): Target length after padding.
+    Returns:
+        ndarray: Padded 1-D ndarray.
+    """
+    last_element = arr[-1]  # Get the last element
+    padding_length = length - len(arr)  # Calculate the length to be padded
+    if padding_length > 0:
         return np.pad(arr, (0, padding_length), 'constant', constant_values=(0, last_element))
+        # Pad the array using np.pad function with padding values of 0 and the last element
     else:
-        return arr
+        return arr  # If no padding is needed, return the original array
 
 
 def get_gt_dic(picklePath):
@@ -64,22 +74,10 @@ def test(dataloader, model, args, viz, device, plot_curve=False, logger=None, st
 
                 # 由于数据集长度不能被16整除，pred与gt不对齐，多切少补（gt）
                 _gt_raw = gt_dic[fname[0]]
-
                 if sig.shape[0] * 16 < len(_gt_raw):
                     _gt = torch.tensor(_gt_raw[:len(sig) * snipit_length])
                 else:
                     _gt = torch.tensor(pad_array(_gt_raw, len(sig) * snipit_length))
-
-                # if args.alignment_method == 'add':  # TEVAD default, len(pred*16)>=len(gt)
-                #     # 由于pred的策略是对最后不足16(snipit_length)frame的视频以最后一个frame进行补齐，所以此处也对应的对gt进行补齐
-                #     if sig.shape[0]*16<len(_gt_raw):
-                #         _gt=torch.tensor(_gt_raw[:len(ig[0])*16])
-                #     else:
-                #         _gt = torch.tensor(pad_array(_gt_raw, len(sig) * snipit_length))
-                # elif args.alignment_method == 'cut':  # 对于最后不足16(snipit_length)的frame直接丢弃不做推理，len(pred*16)<=len(gt)
-                #     _gt = torch.tensor(_gt_raw[:len(sig) * snipit_length])
-                # else:
-                #     raise ValueError('Error: alignment method not specified')
 
                 pred = torch.cat((pred, sig))  # pred means pread_all_preds
                 gt = torch.cat((gt, _gt))
@@ -116,7 +114,6 @@ def test(dataloader, model, args, viz, device, plot_curve=False, logger=None, st
 
         pred = list(pred.cpu().detach().numpy())
         pred = np.repeat(np.array(pred), snipit_length)  # 数组中的每个元素重复16遍，即同一个clip中的16帧共享相同的预测结果
-
         pred_abn = list(pred_abn.cpu().detach().numpy())
         pred_abn = np.repeat(np.array(pred_abn), snipit_length)  # 数组中的每个元素重复16遍，即同一个clip中的16帧共享相同的预测结果
 
@@ -127,20 +124,18 @@ def test(dataloader, model, args, viz, device, plot_curve=False, logger=None, st
         if args.use_dic_gt:
             rec_auc_abn, pr_auc_abn, fpr_all, tpr_all = compute_auc(gt_abn, pred_abn, 'abnormal')
             far_abn = compute_far(gt_abn, pred_abn, 'abnormal')
-
+        else:
+            rec_auc_abn,far_abn=0,0
         # plot_curve = True
+
         if plot_curve:  # 画图模式下只画图
-            anomap(predict_dict, gt_dict, args.dataset + '_' + args.exp_name,
+            #def anomap(predict_dict, label_dict, save_path: str, itr, save_root: str, zip=False):
+            anomap(predict_dict, gt_dict, args.exp_name,
                    step, args.abn_curve_save_root)
             if args.use_dic_gt:
                 return rec_auc_all, ap, rec_auc_abn, far_all, far_abn
             else:
                 return rec_auc_all, ap, 0, far_all, 0
-
-        # viz.plot_lines('pr_auc', pr_auc_all)
-        # viz.plot_lines('auc', rec_auc_all)
-        # viz.lines('scores', pred)
-        # viz.lines('roc', tpr_all, fpr_all)
 
         viz.plot_lines('pr_auc', pr_auc_all)
         viz.plot_lines('rec_auc_all', rec_auc_all)
@@ -151,13 +146,16 @@ def test(dataloader, model, args, viz, device, plot_curve=False, logger=None, st
         viz.lines('roc', tpr_all, fpr_all)
 
         if args.save_test_results:
-            np.save('results/' + args.dataset + '_pred.npy', pred)
-            np.save('results/' + args.dataset + '_fpr.npy', fpr_all)
-            np.save('results/' + args.dataset + '_tpr.npy', tpr_all)
-            # np.save('results/' + args.dataset + '_precision.npy', precision)
-            # np.save('results/' + args.dataset + '_recall.npy', recall)
-            np.save('results/' + args.dataset + '_auc.npy', rec_auc_all)
-            np.save('results/' + args.dataset + '_ap.npy', ap)
+            os.makedirs('results/' + args.dataset+'/'+args.exp_name ,exist_ok=True)
+            np.save('results/' + args.dataset+'/'+args.exp_name + '/'+'_pred.npy', pred)
+            with open('results/' + args.dataset+'/'+args.exp_name + '/'+'_pred.pickle', 'wb') as file:
+                pickle.dump(predict_dict, file)
+            np.save('results/' + args.dataset + '/'+args.exp_name + '/'+'_fpr.npy', fpr_all)
+            np.save('results/' + args.dataset + '/'+args.exp_name + '/'+'_tpr.npy', tpr_all)
+            # np.save('results/' + args.dataset + '/'+args.exp_name + '/'+'_precision.npy', precision)
+            # np.save('results/' + args.dataset +'/'+args.exp_name + '/'+ '_recall.npy', recall)
+            np.save('results/' + args.dataset + '/'+args.exp_name + '/'+'_auc.npy', rec_auc_all)
+            np.save('results/' + args.dataset + '/'+args.exp_name + '/'+'_ap.npy', ap)
 
         if logger:
             logger.log(

@@ -7,7 +7,8 @@ import numpy as np
 
 def rename(file_name):
     if file.endswith('.npy'):
-        new_name=file_name.replace('.mp4','')
+        # new_name=file_name.replace('.mp4','')
+        new_name=file_name.replace('videomae.npy','_videomae.npy')
         os.renames(file_name,new_name)
 
 def reshape(file_name):  # file_name:real_path of npy
@@ -18,11 +19,24 @@ def reshape(file_name):  # file_name:real_path of npy
         print(data.shape)
         np.save(file_name, data)
 
-dir = "/home/sh/TEVAD/save/TAD/TAD_9-5_9-1_finetune_KMeans_8centers"
+def shapeCheck(file_name):
+    if file.endswith('.npy'):
+        data = np.load(file_name)
+        # 修改np文件的shape
+        print(data.shape)
+        assert data.shape[1]==5
+        # assert data.shape[0]==10
+
+        print(file_name)
+        pass
+
+dir = '/media/cw/584485FC4485DD5E/csh/tevad-pro/save/Violence/Violence_five_crop_i3d_v1'
 for file in os.listdir(dir):
     file_name = os.path.join(dir, file)
 
+    shapeCheck(file_name)
     # rename(file_name)
-    reshape(file_name)
+    # reshape(file_name)
+
 
 

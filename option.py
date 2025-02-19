@@ -3,7 +3,7 @@ import argparse
 parser = argparse.ArgumentParser(description='RTFM')
 parser.add_argument('--exp-name', type=str, default=None, help='exp-name，also viz_name')
 # dataset config
-parser.add_argument('--use_dic_gt', action='store_true', default=True, help='get GrandTruth from a pickle file')
+parser.add_argument('--use_dic_gt', action='store_true', default=False, help='get GrandTruth from a pickle file')
 parser.add_argument('--abn_curve_save_root', type=str, default='./curve', help='folder for abn_curve_savepath')
 parser.add_argument('--dataset', default='ucf', help='dataset to train on (shanghai, ucf, ped2, violence, TE2)')
 # parser.add_argument('--alignment_method', type=str, default='add', choices=['add', 'cut'],
@@ -14,12 +14,16 @@ parser.add_argument('--sampling', type=int, default=1, help='sampling of videos'
 parser.add_argument('--feature-group', default='both', choices=['both', 'vis', 'text'],
                     help='feature groups used for the model')
 parser.add_argument('--fusion', type=str, default='concat',help='how to fuse vis and text features')
-parser.add_argument('--feat-extractor', default='i3d', choices=['i3d', 'c3d', 'videoMAE', 'clip'])
+parser.add_argument('--feat-extractor', default='i3d', choices=['i3d', 'c3d', 'videomae', 'clip'])
 parser.add_argument('--feature-size', type=int, default=2048, help='size of vis feature (default: 2048)')
+parser.add_argument('--feat-extractor-B', default='clip', choices=['i3d', 'c3d', 'videomae', 'clip'])
+parser.add_argument('--feature-size-B', type=int, default=768, help='size of vis feature (default: 768(CLIP-L))')
 parser.add_argument('--caption-extractor', default='swinBERT', choices=['swinBERT', 'clip'])
 parser.add_argument('--emb_dim', type=int, default=768, help='dimension of text embeddings')
 parser.add_argument('--rgb-list', default=None, help='list of rgb features ')
 parser.add_argument('--test-rgb-list', default=None, help='list of test rgb features ')
+parser.add_argument('--vis_feature_path_B_folder', default=None, help='folder path of rgb features(B) ')
+parser.add_argument('--copy2SSD_path', default=None, help='moved dataset to the SSD to speed up reading')
 
 # parser.add_argument('--modality', default='RGB', help='the type of the input, RGB,AUDIO, or MIX')
 parser.add_argument('--gt', default=None, help='file of ground truth ')

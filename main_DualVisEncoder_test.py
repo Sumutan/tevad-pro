@@ -1,7 +1,7 @@
 from torch.utils.data import DataLoader
 import torch.optim as optim
 from model import Model
-from dataset import Dataset
+from dataset import Dataset_DualVisionEncoder as Dataset
 from test_10crop import test
 import option
 from utils import *
@@ -16,7 +16,7 @@ if __name__ == '__main__':
     test_loader = DataLoader(Dataset(args, test_mode=True),
                               batch_size=1, shuffle=False,
                               num_workers=0, pin_memory=False)
-
+    args.feature_size=args.feature_size+args.feature_size_B
     model = Model(args)
     if args.pretrained_model is not None:
         print("Loading pretrained model " + args.pretrained_model)

@@ -1,7 +1,11 @@
 import visdom
 import numpy as np
 import torch
-import random, os
+import random
+import shutil
+import os
+import logging
+import time
 
 
 class Visualizer(object):
@@ -228,6 +232,21 @@ def compute_auc(gt, pred, printname=None):  # 计算 ROC 曲线和 AUC
     if printname:
         print(f'rec_auc_{printname} : ' + str(rec_auc))
         print(f'pr_{printname} : ' + str(pr_auc))
+        print(f'far_{printname} : ' + str(pr_auc))
+
+    return rec_auc, pr_auc, fpr, tpr
+
+
+def compute_auc_and_far(gt, pred, printname=None):  # 计算 ROC 曲线和 AUC,far
+    fpr, tpr, threshold = roc_curve(list(gt), pred)  # 计算 ROC 曲线
+    rec_auc = auc(fpr, tpr)  # 计算 ROC 曲线下的面积（AUC）
+    precision, recall, th = precision_recall_curve(list(gt), pred)  # 计算 PR 曲线
+    pr_auc = auc(recall, precision)  # 计算 PR 曲线下的面积（PR AUC）
+    far_all = compute_far(gt, pred)
+    if printname:
+        print(f'rec_auc_{printname} : ' + str(rec_auc))
+        print(f'pr_{printname} : ' + str(pr_auc))
+        print(f'far_{printname} : ' + str(far_all))
 
     return rec_auc, pr_auc, fpr, tpr
 
@@ -277,7 +296,6 @@ def anomap(predict_dict, label_dict, save_path: str, itr, save_root: str, zip=Fa
                 plt.close()
                 # 将缓存中的结果保存到zip文件中
                 zf.writestr(img_name, buf.getvalue())
-
     else:
         # 对于每个预测结果，绘制曲线并保存到指定的路径中
         for k, v in predict_dict.items():
@@ -286,17 +304,155 @@ def anomap(predict_dict, label_dict, save_path: str, itr, save_root: str, zip=Fa
             # label_np = label_dict[k][:len(v.repeat(16))]
             label_np = label_dict[k]
             x = np.arange(len(predict_np))
-            plt.plot(x, predict_np, color='b', label='predicted scores', linewidth=1)
-            plt.fill_between(x, label_np, where=label_np > 0, facecolor="red", alpha=0.3)
-            plt.yticks(np.arange(0, 1.1, step=0.1))
+            # old
+            # plt.plot(x, predict_np, color='#87BD2D',linestyle='-', label='predicted scores', linewidth=1)
+            # plt.fill_between(x, label_np, where=label_np > 0, facecolor="red", alpha=0.3)
+            # plt.yticks(np.arange(0, 1.1, step=0.1))
+            # plt.xlabel('Frames')
+            # plt.ylabel('Anomaly scores')
+            # plt.grid(True, linestyle='-.')
+            # plt.legend()
+            # # plt.show()
+            # cxj
+            # e43a15
+            plt.plot(x, predict_np, color='#E3310A', label='predicted scores', linewidth=2)  # xian: 2e367b/ E3310A
+            plt.fill_between(x, label_np, where=label_np > 0, facecolor="#C33764", alpha=0.3)  #
+            plt.yticks(np.arange(0, 1.1, step=0.2))
             plt.xlabel('Frames')
             plt.ylabel('Anomaly scores')
-            plt.grid(True, linestyle='-.')
-            plt.legend()
+            # plt.grid(True, linestyle='-.')
+            # plt.legend() #tuli
             # plt.show()
 
-            os.makedirs(os.path.join(save_root, save_path, 'plot', 'itr_{}'.format(itr)), exist_ok=True)
-            plt.savefig(os.path.join(save_root, save_path, 'plot', 'itr_{}'.format(itr), k))
+            os.makedirs(os.path.join(save_root, save_path, 'plot'), exist_ok=True)
+            plt.savefig(os.path.join(save_root, save_path, 'plot', k) + '.png')
             plt.close()
 
         print("curve save to {}".format(os.path.join(save_root, save_path, 'plot', 'itr_{}'.format(itr))))
+
+
+def copy_dataset_to_ssd(src_folder, dest_folder):
+    """
+    将训练集从源文件夹复制到目标文件夹。
+    """
+    shutil.copytree(src_folder, dest_folder)
+    print(f"copy {src_folder} to {dest_folder}")
+    return dest_folder
+
+
+def delete_dataset_from_ssd(dest_folder):
+    """
+    删除目标文件夹中的训练集。
+    """
+    if os.path.exists(dest_folder):
+        shutil.rmtree(dest_folder)
+    print(f"delete {dest_folder}")
+
+
+def read_nth_line(file_path, n):
+    """
+    读取文件的第 N 行内容
+    参数:
+        file_path (str): 文件路径
+        n (int): 要读取的行号（从 1 开始）
+    返回:
+        str: 第 N 行的内容，如果文件行数少于 N 行，则返回 None
+    """
+    try:
+        with open(file_path, 'r') as file:
+            for current_line, line in enumerate(file, start=1):
+                if current_line == n:
+                    return line.strip()  # 去掉换行符
+        return None  # 如果文件行数少于 N 行
+    except FileNotFoundError:
+        print(f"File not found: {file_path}")
+        return None
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
+
+
+def replace_and_save(file_path, src1, src2, new_file_path):
+    """
+    打开文件，将其中所有的 src1 替换为 src2，并另存为新文件。
+
+    参数:
+        file_path (str): 原文件路径
+        src1 (str): 要替换的字符串
+        src2 (str): 替换后的字符串
+        new_file_path (str): 新文件路径
+    """
+    try:
+        with open(file_path, 'r') as file:
+            lines = file.readlines()
+
+        # 替换每一行中的 src1 为 src2
+        new_lines = [line.replace(src1, src2) for line in lines]
+
+        # 将结果写入新文件
+        with open(new_file_path, 'w') as new_file:
+            new_file.writelines(new_lines)
+
+        print(f"File saved as {new_file_path}")
+
+    except FileNotFoundError:
+        print(f"File not found: {file_path}")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+
+class Logger:
+    """
+    test:
+    logger=Logger("train log.log")
+    logger.log('This is a test message')
+    logger.log(f"Epoch {6}: loss = {0.213}")
+
+    dic={"a":1,"b":2}
+    logger.log_dic(dic)
+    """
+
+    def __init__(self, log_file, write_log_level=False, name='default'):
+        if os.path.exists(log_file):
+            os.remove(log_file)
+
+        self.logger = logging.getLogger(name)
+        self.logger.setLevel(logging.INFO)
+        # 创建文件处理程序
+        file_handler = logging.FileHandler(log_file)
+        file_handler.setLevel(logging.DEBUG)
+        # 创建日志格式器
+        formatter = logging.Formatter('%(message)s')
+        file_handler.setFormatter(formatter)
+        # 将文件处理程序添加到Logger对象中
+        self.logger.addHandler(file_handler)
+
+        self.logger.info('Log file created at %s' % time.asctime())
+
+    def log(self, message):
+        self.logger.info(message)
+
+    def log_dic(self, config):
+        self.logger.info("Config:")
+        if isinstance(config, dict):
+            for key, value in config.items():
+                self.logger.info(f"\t--{key}:{value}")
+        elif isinstance(config, object):
+            for key in dir(config):
+                if not key.startswith('_'):
+                    value = getattr(config, key)
+                    self.logger.info(f"\t--{key}:{value}")
+        else:
+            raise TypeError("Not supported type for config:%s" % type(config))
+
+
+class Config(object):  # 用于存储模型的超参数和其他配置信息,以及训练中的全局动态参数
+    def __init__(self, args):
+        self.lr = eval(args.lr)  # 用于将字符串作为 Python 表达式进行求值，并返回求值结果
+        self.lr_str = args.lr
+        self.training_step = 0
+
+    def __str__(self):  # 用于将配置信息格式化为字符串
+        attrs = vars(self)  # vars(self) 函数用于获取对象的属性字典，返回一个字典对象，其中包含对象的所有属性名称和属性值。
+        attr_lst = sorted(attrs.keys())
+        return '\n'.join("- %s: %s" % (item, attrs[item]) for item in attr_lst if item != 'lr')

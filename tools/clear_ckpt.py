@@ -6,9 +6,6 @@ import os
 import glob
 import datetime
 
-# 指定文件夹路径
-folder_path = "/media/sh/9a898338-9715-47b4-bca4-43f2270c463a/sh/programs/TEVAD-main/ckpt/TAD-videoMae-GL-20e"
-
 def clear_ckpt(folder_path,leave=2):
     '''剩余leave个最新的.pkl文件'''
     # 获取文件夹中所有.pkl文件的列表
@@ -21,7 +18,7 @@ def clear_ckpt(folder_path,leave=2):
             os.remove(file)
             print(f"remove {file}")
 
-root_folder = "/media/sh/9a898338-9715-47b4-bca4-43f2270c463a/sh/programs/TEVAD-main/ckpt"
+root_folder = "/media/cw/584485FC4485DD5E/csh/tevad-pro/ckpt"
 for folder_path, folder_name, file_names in os.walk(root_folder):
     for file_name in folder_name:
         folder = os.path.join(folder_path, file_name)

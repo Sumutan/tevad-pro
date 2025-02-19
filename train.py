@@ -4,6 +4,7 @@ import torch.nn.functional as F
 torch.set_default_tensor_type('torch.cuda.FloatTensor')
 from torch.nn import L1Loss
 from torch.nn import MSELoss
+import thop
 
 
 def sparsity(arr, batch_size, lamda2):  # arr1.shape=[1024, ], abn_scores
@@ -131,3 +132,24 @@ def train(nloader, aloader, model, args, optimizer, viz, device,logger=None,step
             logger.log(f"Epoch {step}  loss: {cost.item():.4f}  smooth loss: {loss_smooth.item():.4f}  sparsity loss: {loss_sparse.item():.4f}")
         # return  cost.item()
 
+def conput_flops(nloader, aloader, model, args, optimizer, viz, device,logger=None,step=None):
+    with torch.no_grad():
+        model.eval()
+        batch_size = args.batch_size
+        ninput, ntext, nlabel = next(nloader)  # ninput.shape=[32,10,32,2048], nlabel.shape=[32,]
+        ainput, atext, alabel = next(aloader)  # ainput.shape=[32,10,32,2048], alabel.shape=[32,]
+
+        input = torch.cat((ninput, ainput), 0).to(device)  # input.shape=[64,10,32,2048], 第一维是batch_size * 2, 第三维是snippets数
+        text = torch.cat((ntext, atext), 0).to(device)
+
+        score_abnormal, score_normal, feat_select_abn, feat_select_normal, feat_abn_bottom, \
+        feat_normal_bottom, scores, scores_nor_bottom, scores_nor_abn_bag, _ = model(input, text)  # b*32 x 2048
+
+        print('input.shape:',input.shape)
+        print('text.shape:',text.shape)
+        flops = thop.profile(model, (input,text),verbose=True)[0] / 1e9  # 以十亿为单位
+        print(f'FLOPs: {flops}*1e9')
+
+        # 计算模型的参数量
+        total_params = sum(p.numel() for p in model.parameters())
+        print(f'Total parameters: {total_params}')

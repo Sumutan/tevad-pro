@@ -8,8 +8,6 @@ from test_10crop import test
 import option
 from tqdm import tqdm
 from utils import *
-from config import *
-from logger import Logger
 
 if __name__ == '__main__':
     args = option.parser.parse_args()
@@ -28,8 +26,7 @@ if __name__ == '__main__':
     else:
         viz_name = '{}-{}-{}-{}-{}-{}-{}-{}-{}'.format(args.dataset, args.feature_group, text_opt, args.fusion,
                                                        args.normal_weight, args.abnormal_weight, extra_loss_opt,
-                                                       args.alpha,
-                                                       sb_pt_name)
+                                                       args.alpha,sb_pt_name)
     # build log folder
     os.makedirs(f'./output/{viz_name}', exist_ok=True)
     trainLogger = Logger(f'./output/{viz_name}/{viz_name}-train.log', name="trainLogger")
@@ -62,13 +59,10 @@ if __name__ == '__main__':
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = model.to(device)
 
-    if not os.path.exists('./ckpt'):
-        os.makedirs('./ckpt')
+    os.makedirs('./ckpt',exist_ok=True)
 
     optimizer = optim.Adam(model.parameters(),
                            lr=config.lr[0], weight_decay=0.005)  # default lr=0.001
-    # optimizer = optim.AdamW(model.parameters(),
-    #                        lr=config.lr[0], weight_decay=0.005)  # default lr=0.001
 
     test_info = {"epoch": [], "test_AUC": [], "test_AP": [], "test_AUC_abn": [], "test_far_all": [], "test_far_abn": []}
     train_info = {"epoch": [], "train_loss": []}
@@ -76,7 +70,7 @@ if __name__ == '__main__':
     best_AUC, best_ap = -1, -1
     best_epoch = -1
     output_path = 'output'  # put your own path here
-    # auc = test(test_loader, model, args, viz, device)
+    auc = test(test_loader, model, args, viz, device)
 
     # training
     for step in tqdm(
@@ -109,13 +103,13 @@ if __name__ == '__main__':
                 if test_info["test_AP"][-1] > best_ap:
                     best_ap = test_info["test_AP"][-1]
                     best_epoch = step
-                    # torch.save(model.state_dict(), './ckpt/' +
-                    #            '{}-{}-{}-{}-{}-{}-{}-{}-{}.pkl'.format(args.dataset, args.feature_group, text_opt,
-                    #                                                    args.fusion, args.alpha, extra_loss_opt, step,
-                    #                                                    args.seed, sb_pt_name))
-                    # save_best_record(test_info, os.path.join(output_path,'{}-{}-{}-{}-{}-{}-{}-{}-AP.txt'.format(
-                    #     args.dataset,args.feature_group,text_opt,args.fusion,args.alpha,extra_loss_opt,step,
-                    #     sb_pt_name)),"test_AP")
+                    torch.save(model.state_dict(), './ckpt/' +
+                               '{}-{}-{}-{}-{}-{}-{}-{}-{}.pkl'.format(args.dataset, args.feature_group, text_opt,
+                                                                       args.fusion, args.alpha, extra_loss_opt, step,
+                                                                       args.seed, sb_pt_name))
+                    save_best_record(test_info, os.path.join(output_path,'{}-{}-{}-{}-{}-{}-{}-{}-AP.txt'.format(
+                        args.dataset,args.feature_group,text_opt,args.fusion,args.alpha,extra_loss_opt,step,
+                        sb_pt_name)),"test_AP")
                 APs = test_info["test_AP"]
                 APs_mean, APs_median, APs_std, APs_max, APs_min = \
                     np.mean(APs), np.median(APs), np.std(APs), np.max(APs), np.min(APs)
@@ -128,17 +122,10 @@ if __name__ == '__main__':
                         test(test_loader, model, args, viz, device, plot_curve=True, step=step)
                     best_AUC = test_info["test_AUC"][-1]
                     best_epoch = step
-                    # torch.save(model.state_dict(), './ckpt/' + '{}-{}-{}-{}-{}-{}-{}-{}-{}.pkl'
-                    #            .format(args.dataset, args.feature_group, text_opt, args.fusion, args.alpha,
-                    #                    extra_loss_opt, step, args.seed, sb_pt_name))
                     os.makedirs('./ckpt/' + viz_name, exist_ok=True)
                     torch.save(model.state_dict(), './ckpt/' + viz_name + '/{}-{}-{}-{}-{}-{}-{}-{}-{}.pkl'
                                .format(args.dataset, args.feature_group, text_opt, args.fusion, args.alpha,
                                        extra_loss_opt, step, args.seed, sb_pt_name))
-                    # save_best_record(test_info, os.path.join(output_path,'{}-{}-{}-{}-{}-{}-{}-{}-AUC.txt'
-                    #                                          .format(args.dataset,args.feature_group,text_opt,
-                    #                                                  args.fusion,args.alpha,extra_loss_opt,step,
-                    #                                                 sb_pt_name)),"test_AUC")
 
                 AUCs = test_info["test_AUC"]
                 AUCs_mean, AUCs_median, AUCs_std, AUCs_max, AUCs_min = \
@@ -146,5 +133,6 @@ if __name__ == '__main__':
                 print("std\tmean\tmedian\tmin\tmax\tAUC")
                 print("{:.2f}\t{:.2f}\t{:.2f}\t{:.2f}\t{:.2f}"
                       .format(AUCs_std * 100, AUCs_mean * 100, AUCs_median * 100, AUCs_min * 100, AUCs_max * 100))
+
     print("Best result:" + viz_name + "-" + str(best_epoch))
     torch.save(model.state_dict(), f'./ckpt/{viz_name}/' + args.dataset + 'final.pkl')

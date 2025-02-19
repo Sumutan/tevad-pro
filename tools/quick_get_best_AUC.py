@@ -1,5 +1,5 @@
 """
-编写python代码，给定一个文件路径，对其中所有文件夹进行以下操作：
+给定一个文件路径，对其中所有文件夹进行以下操作：
 1.找到并打开其中以“test.log”结尾的数据
 2.该数据中每一行都记着形如以下形式的
 日志：“Epoch 530  rec_auc_all: 0.8245  rec_auc_abn: 0.8270  far_all: 0.0949 far_abn:0.0923”，
@@ -25,22 +25,28 @@ def find_best_log(file_path):
         else:
             best_line = None
             best_rec_auc_all = float('-inf')
-
+            if any('best_AUC_' in file for file in file_list): continue # 已经统计过则直接跳过
             # 遍历文件列表，找到最高的 rec_auc_all 值
             for file in file_list:
                 output_file_path = os.path.join(folder_path, file)
                 with open(output_file_path, 'r') as f:
                     lines = f.readlines()
+                    complete=False
                     for line in lines:
                         if "rec_auc_all" in line:
                             rec_auc_all = float(line.split("rec_auc_all:")[-1].split()[0])
                             if rec_auc_all > best_rec_auc_all:
                                 best_rec_auc_all = rec_auc_all
                                 best_line = line.strip()
+                        if "Epoch 1000" in line:
+                            complete=True
 
             # 将最高的 rec_auc_all 值保存到 "best.log" 文件中
             if best_line:
-                best_log_file = os.path.join(folder_path, f"best_AUC_{str(best_rec_auc_all)}.log")
+                if complete:
+                    best_log_file = os.path.join(folder_path, f"best_AUC_{str(best_rec_auc_all)}.log")
+                else:
+                    best_log_file = os.path.join(folder_path, f"not_complete_best_AUC_{str(best_rec_auc_all)}.log")
                 with open(best_log_file, 'w') as f:
                     f.write(best_line)
                 print(f"文件夹 {folder} 中的最佳日志已保存到 {best_log_file}")

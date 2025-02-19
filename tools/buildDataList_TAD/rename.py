@@ -3,7 +3,7 @@
 """
 import os
 
-dir="/home/sh/TEVAD/save/TAD/TAD_GL-20e-nofreeze"
+dir="/media/cw/584485FC4485DD5E/csh/tevad-pro/save/TAD/TAD_finetune_pretrain_with_RandomMaskinK400-100_457"
 for file in os.listdir(dir):
     old_name=os.path.join(dir,file)
     new_name=os.path.join(dir,file.replace(".mp4",""))
