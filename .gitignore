@@ -5,6 +5,7 @@ curve/
 output/
 results/
 save/
+tmp/
 
 
 tools/buildDataList_ST/news
