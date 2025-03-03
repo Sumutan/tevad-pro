@@ -487,7 +487,12 @@ test:
   shanghai clip 7.10:
     --pretrained-ckpt /media/lizi/新加卷/sh/TEVAD-main/ckpt/shanghai-visclip/shanghai-both-text_agg-add-0.0001-extra_loss-610-4869-.pkl --dataset shanghai --feature-group both --fusion add --aggregate_text --extra_loss --feat-extractor clip --feature-size 512 --use_dic_gt
   ucf mae test:
-    --dataset ucf --feat-extractor videoMAE --pretrained-ckpt ./ckpt/my_best/ucf-both-text_agg-concat-0.0001-extra_loss-620-4869-.pkl --feature-group both --fusion concat --aggregate_text --save_test_results
+    --dataset ucf --feat-extractor videoMAE
+    --feature-group both --fusion concat --aggregate_text --save_test_results --use_dic_gt True
+    --rgb-list list/ucf-videoMae-CLIP_UCF_9-5_9-1_finetune_dif_0.5_SP_norm_a0.05.list
+    --test-rgb-list list/ucf-videoMae-test-CLIP_UCF_9-5_9-1_finetune_dif_0.5_SP_norm_a0.05.list
+    --pretrained-ckpt ./ckpt/ucf/ucf-videoMae-CLIP_UCF_9-5_9-1_finetune_dif_0.5_SP_norm_a0.05_seed3407/ucf-both-text_agg-concat-0.0001-extra_loss-235-3407-.pkl
+
   TAD:
     TAD-videoMae-9-5_finetune-only_vis-AISO_0.5:
       --dataset TAD --feature-group vis --fusion concat --feature-size 768 --use_dic_gt
