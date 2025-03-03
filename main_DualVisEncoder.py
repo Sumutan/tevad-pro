@@ -3,6 +3,7 @@ from torch.utils.data import DataLoader
 import torch.optim as optim
 from model import Model
 # from model_csh_MixBeforeMTN import Model
+# from dataset import Dataset
 from dataset import Dataset_DualVisionEncoder as Dataset
 from train import train
 from test_10crop import test
@@ -23,25 +24,7 @@ if __name__ == '__main__':
         sb_pt_name = args.emb_folder[11:]  # sent_emb_n_XXX
     print("Using SwinBERT pre-trained model: ", sb_pt_name)
 
-    if args.exp_name:
-        viz_name = args.exp_name
-    else:
-        viz_name = '{}-{}-{}-{}-{}-{}-{}-{}-{}'.format(args.dataset, args.feature_group, text_opt, args.fusion,
-                                                       args.normal_weight, args.abnormal_weight, extra_loss_opt,
-                                                       args.alpha,sb_pt_name)
-
-    #copy dataset to SSD
-    if args.copy2SSD_path:
-        print("Loading dataset to SSD")
-        dataset_path= os.path.dirname(read_nth_line(args.rgb_list,1))
-        dataset_file_name=dataset_path.split('/')[-1]
-        args.copy2SSD_path=os.path.join(args.copy2SSD_path, dataset_file_name)
-        copy_dataset_to_ssd(dataset_path, args.copy2SSD_path)
-        replace_and_save(args.rgb_list,dataset_path,args.copy2SSD_path,'list/tmp_train.list')
-        replace_and_save(args.test_rgb_list, dataset_path, args.copy2SSD_path, 'list/tmp_test.list')
-        args.rgb_list='list/tmp_train.list'
-        args.test_rgb_list = 'list/tmp_test.list'
-
+    viz_name = args.exp_name
     # build log folder
     os.makedirs(f'./output/{viz_name}', exist_ok=True)
     trainLogger = Logger(f'./output/{viz_name}/{viz_name}-train.log', name="trainLogger")
@@ -160,5 +143,3 @@ if __name__ == '__main__':
                       .format(AUCs_std * 100, AUCs_mean * 100, AUCs_median * 100, AUCs_min * 100, AUCs_max * 100))
     print("Best result:" + viz_name + "-" + str(best_epoch))
     torch.save(model.state_dict(), f'./ckpt/{viz_name}/' + args.dataset + 'final.pkl')
-
-    delete_dataset_from_ssd(args.copy2SSD_path)
